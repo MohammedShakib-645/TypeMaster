@@ -1627,7 +1627,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (outcome === 'accepted') {
                         const modal = $('app-download-modal');
                         if (modal) modal.classList.remove('open');
-                        showToast('🎉', 'App Installed!', 'TypeMaster has been installed on your device.');
+                        showToast('🎉', 'App Installed!', 'TypeMaster has been installed on your desktop/device.');
                         return;
                     }
                 } catch (e) {
@@ -1635,50 +1635,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // 2. Direct Application File Download
+            // 2. Windows Desktop Shortcut (.url file) Download
             try {
-                const appFileContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TypeMaster Standalone Web Application</title>
-    <style>
-        body { font-family: system-ui, -apple-system, sans-serif; background: #0F172A; color: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
-        .card { background: rgba(30,41,59,0.9); border: 1px solid rgba(99,102,241,0.4); border-radius: 24px; padding: 44px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); max-width: 440px; }
-        .icon { font-size: 56px; margin-bottom: 12px; }
-        h1 { font-size: 24px; margin-bottom: 8px; color: #fff; }
-        p { color: #94A3B8; font-size: 14px; margin-bottom: 24px; }
-        .btn { display: inline-block; background: linear-gradient(135deg, #6366F1, #8B5CF6); color: #fff; text-decoration: none; padding: 14px 28px; border-radius: 14px; font-weight: 800; font-size: 15px; box-shadow: 0 4px 20px rgba(99,102,241,0.4); }
-    </style>
-    <script>
-        setTimeout(() => {
-            window.location.href = "https://mohammedshakib-645.github.io/TypeMaster/";
-        }, 600);
-    </script>
-</head>
-<body>
-    <div class="card">
-        <div class="icon">⚡</div>
-        <h1>TypeMaster Application</h1>
-        <p>Launching your touch typing practice session...</p>
-        <a href="https://mohammedshakib-645.github.io/TypeMaster/" class="btn">Launch Application</a>
-    </div>
-</body>
-</html>`;
-                const blob = new Blob([appFileContent], { type: 'text/html' });
+                const shortcutContent = `[InternetShortcut]
+URL=https://mohammedshakib-645.github.io/TypeMaster/
+IconIndex=0
+IconFile=https://mohammedshakib-645.github.io/TypeMaster/assets/favicon.svg
+IDList=
+HotKey=0
+[{000214A0-0000-0000-C000-000000000046}]
+Prop3=19,2
+`;
+                const blob = new Blob([shortcutContent], { type: 'application/x-mswinurl' });
                 const downloadUrl = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = downloadUrl;
-                a.download = 'TypeMaster-Application.html';
+                a.download = 'TypeMaster Desktop Shortcut.url';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(downloadUrl);
 
-                showToast('📥', 'App Download Started!', 'TypeMaster-Application.html saved to your Downloads folder!');
+                showToast('🖥️', 'Desktop Shortcut Downloaded!', 'Move "TypeMaster Desktop Shortcut.url" from Downloads to your Windows Desktop!');
             } catch (err) {
-                console.error('Download trigger error:', err);
+                console.error('Shortcut download error:', err);
                 showToast('📱', 'Installation Steps', 'Follow the device instructions below. Tap browser menu (⋮) -> "Install App".');
             }
         });
