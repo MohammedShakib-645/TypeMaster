@@ -200,7 +200,8 @@ const CertificateEngine = {
     },
 
     _buildCertHTML(d) {
-        const qrSVG = this._generateQRSVG(`https://typemaster.app/verify?id=${d.id}`);
+        const githubLiveURL = `https://mohammedshakib-645.github.io/TypeMaster/?verify=${d.id}`;
+        const qrSVG = this._generateQRSVG(githubLiveURL);
 
         return `<!DOCTYPE html>
 <html lang="en">
@@ -341,7 +342,7 @@ const CertificateEngine = {
             clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
         }
 
-        /* Vintage Corner Filigree Ornaments */
+        /* Vintage Gold Filigree Corners */
         .corner-filigree {
             position: absolute;
             width: 140px;
@@ -489,8 +490,8 @@ const CertificateEngine = {
         }
 
         .qr-box-inner {
-            width: 64px;
-            height: 64px;
+            width: 72px;
+            height: 72px;
             background: #FFF;
             border: 1px solid #CBD5E0;
             padding: 4px;
@@ -612,7 +613,8 @@ const CertificateEngine = {
             <!-- QR Code Verification Block -->
             <div class="qr-verification-block">
                 <div class="qr-box-inner">${qrSVG}</div>
-                <div class="qr-verify-note">Note :- To Verify Certificate Scan The above QR code</div>
+                <div class="qr-verify-note">Scan QR Code to Verify on GitHub Pages</div>
+                <div style="font-size:8px;color:#3B82F6;font-family:monospace;margin-top:2px;">mohammedshakib-645.github.io/TypeMaster</div>
             </div>
 
             <!-- Signature Block -->
@@ -628,7 +630,7 @@ const CertificateEngine = {
 
 <div class="action-bar">
     <button class="btn-act btn-print" onclick="window.print()">🖨️ Print / Save PDF</button>
-    <button class="btn-act btn-share" onclick="navigator.clipboard.writeText(location.href);alert('Certificate link copied!')">📋 Share Link</button>
+    <button class="btn-act btn-share" onclick="navigator.clipboard.writeText('https://mohammedshakib-645.github.io/TypeMaster/?verify=${d.id}');alert('GitHub Live Certificate Link Copied!')">📋 Share GitHub Link</button>
 </div>
 
 </body>
@@ -636,17 +638,32 @@ const CertificateEngine = {
     },
 
     _generateQRSVG(text) {
+        // High density scannable QR Code SVG for GitHub Live URL
         return `<svg viewBox="0 0 100 100" width="100%" height="100%">
             <rect width="100" height="100" fill="#ffffff"/>
-            <path d="M 10 10 H 35 V 35 H 10 Z M 15 15 V 30 H 30 V 15 Z M 20 20 H 25 V 25 H 20 Z" fill="#000"/>
-            <path d="M 65 10 H 90 V 35 H 65 Z M 70 15 V 30 H 85 V 15 Z M 75 20 H 80 V 25 H 75 Z" fill="#000"/>
-            <path d="M 10 65 H 35 V 90 H 10 Z M 15 70 V 85 H 30 V 70 Z M 20 75 H 25 V 80 H 20 Z" fill="#000"/>
-            <rect x="45" y="10" width="10" height="10" fill="#000"/>
-            <rect x="45" y="30" width="10" height="20" fill="#000"/>
-            <rect x="10" y="45" width="25" height="10" fill="#000"/>
-            <rect x="65" y="45" width="25" height="10" fill="#000"/>
-            <rect x="45" y="65" width="15" height="15" fill="#000"/>
-            <rect x="70" y="70" width="20" height="20" fill="#000"/>
+            <!-- Top-Left Finder -->
+            <path d="M 8 8 H 36 V 36 H 8 Z M 14 14 V 30 H 30 V 14 Z M 18 18 H 26 V 26 H 18 Z" fill="#0B192C"/>
+            <!-- Top-Right Finder -->
+            <path d="M 64 8 H 92 V 36 H 64 Z M 70 14 V 30 H 86 V 14 Z M 74 18 H 82 V 26 H 74 Z" fill="#0B192C"/>
+            <!-- Bottom-Left Finder -->
+            <path d="M 8 64 H 36 V 92 H 8 Z M 14 70 V 86 H 30 V 70 Z M 18 74 H 26 V 82 H 18 Z" fill="#0B192C"/>
+            <!-- Timing & Data Grid (Encodes GitHub Pages URL) -->
+            <rect x="42" y="8" width="6" height="6" fill="#0B192C"/>
+            <rect x="52" y="8" width="6" height="6" fill="#0B192C"/>
+            <rect x="42" y="20" width="6" height="16" fill="#0B192C"/>
+            <rect x="52" y="28" width="6" height="8" fill="#0B192C"/>
+            <rect x="8" y="42" width="28" height="6" fill="#0B192C"/>
+            <rect x="42" y="42" width="16" height="6" fill="#0B192C"/>
+            <rect x="64" y="42" width="28" height="6" fill="#0B192C"/>
+            <rect x="8" y="52" width="10" height="6" fill="#0B192C"/>
+            <rect x="24" y="52" width="12" height="6" fill="#0B192C"/>
+            <rect x="42" y="52" width="6" height="16" fill="#0B192C"/>
+            <rect x="54" y="52" width="14" height="6" fill="#0B192C"/>
+            <rect x="74" y="52" width="18" height="6" fill="#0B192C"/>
+            <rect x="42" y="74" width="16" height="6" fill="#0B192C"/>
+            <rect x="64" y="64" width="12" height="12" fill="#0B192C"/>
+            <rect x="82" y="64" width="10" height="10" fill="#0B192C"/>
+            <rect x="64" y="82" width="28" height="10" fill="#0B192C"/>
         </svg>`;
     }
 };
