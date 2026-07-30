@@ -1579,7 +1579,7 @@ window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
     AppState.deferredInstall = e;
     const btn = $('btn-install-pwa');
-    if (btn) btn.style.display = 'flex';
+    if (btn) btn.style.display = 'inline-flex';
 });
 
 // ═══════════════════════════════════════════════════════════
@@ -1592,21 +1592,43 @@ document.addEventListener('DOMContentLoaded', () => {
     // Nav links
     document.querySelectorAll('.nav-link, .sidebar-brand').forEach(link => {
         link.addEventListener('click', e => {
-            e.preventDefault();
             const view = link.getAttribute('data-view');
-            if (view) navigateTo(view);
+            if (view) {
+                e.preventDefault();
+                navigateTo(view);
+            }
         });
     });
 
-    // PWA install btn
+    // PWA App Download Modal Handlers
+    const openDownloadModal = () => {
+        const modal = $('app-download-modal');
+        if (modal) modal.classList.add('open');
+    };
+
     const installBtn = $('btn-install-pwa');
-    if (installBtn) {
-        installBtn.addEventListener('click', async () => {
+    if (installBtn) installBtn.addEventListener('click', openDownloadModal);
+
+    const sidebarInstallBtn = $('sidebar-btn-install');
+    if (sidebarInstallBtn) sidebarInstallBtn.addEventListener('click', e => {
+        e.preventDefault();
+        openDownloadModal();
+    });
+
+    const triggerPwaBtn = $('btn-trigger-pwa-install');
+    if (triggerPwaBtn) {
+        triggerPwaBtn.addEventListener('click', async () => {
             if (AppState.deferredInstall) {
                 AppState.deferredInstall.prompt();
                 const { outcome } = await AppState.deferredInstall.userChoice;
                 AppState.deferredInstall = null;
-                if (outcome === 'accepted') installBtn.style.display = 'none';
+                if (outcome === 'accepted') {
+                    const modal = $('app-download-modal');
+                    if (modal) modal.classList.remove('open');
+                    showToast('🎉', 'App Installed!', 'TypeMaster has been successfully installed on your device.');
+                }
+            } else {
+                showToast('ℹ️', 'Installation Guide', 'Please follow the instructions below for your device.');
             }
         });
     }

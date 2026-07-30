@@ -99,6 +99,9 @@
             <a class="nav-link" data-view="settings" href="#">
                 <span class="nav-icon">⚙️</span> Settings
             </a>
+            <a class="nav-link" id="sidebar-btn-install" href="#" style="color:var(--primary, #6366f1);font-weight:700;">
+                <span class="nav-icon">📲</span> Download App
+            </a>
 
             <!-- XP FOOTER -->
             <div class="sidebar-footer">
@@ -1545,6 +1548,69 @@
                         📁 Upload .txt File
                         <input type="file" id="custom-file-input" accept=".txt" style="display:none">
                     </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════════
+     MODAL: APP DOWNLOAD / INSTALL PWA
+════════════════════════════════════ -->
+    <div id="app-download-modal" class="modal">
+        <div class="modal-box glass-card" style="max-width:520px;">
+            <div class="modal-header">
+                <h2>📲 Download TypeMaster App</h2>
+                <button class="modal-close-btn" id="btn-close-download-modal">✕</button>
+            </div>
+
+            <div style="text-align:center;padding:12px 0 20px;">
+                <div style="width:72px;height:72px;margin:0 auto 12px;background:linear-gradient(135deg, #6366F1, #8B5CF6);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 0 25px rgba(99, 102, 241, 0.5);border:2px solid rgba(255,255,255,0.2);">
+                    ⚡
+                </div>
+                <h3 style="font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;">TypeMaster Web Application</h3>
+                <p style="font-size:13px;color:var(--text-sub);max-width:400px;margin:0 auto;">
+                    Install TypeMaster directly on your Android, iPhone, Windows, or Mac for full-screen mode, 100% offline practice, and maximum performance!
+                </p>
+            </div>
+
+            <!-- Direct Install Button -->
+            <button type="button" id="btn-trigger-pwa-install" class="btn btn-primary" style="width:100%;padding:14px;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px;box-shadow:0 0 25px rgba(99,102,241,0.4);">
+                <span>📲</span> Install App Directly to Device
+            </button>
+
+            <!-- Device Instructions Accordion -->
+            <div style="display:flex;flex-direction:column;gap:12px;">
+                <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;">
+                    <div style="font-weight:700;color:#fff;font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:8px;">
+                        <span>📱</span> Android & Chrome Installation
+                    </div>
+                    <ol style="font-size:12px;color:var(--text-sub);padding-left:20px;margin:0;line-height:1.6;">
+                        <li>Tap the <strong>⋮ (three dots menu)</strong> at the top right of Chrome.</li>
+                        <li>Select <strong>"Install App"</strong> or <strong>"Add to Home Screen"</strong>.</li>
+                        <li>Click <strong>Install</strong> to add TypeMaster to your app drawer.</li>
+                    </ol>
+                </div>
+
+                <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;">
+                    <div style="font-weight:700;color:#fff;font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:8px;">
+                        <span>🍏</span> iPhone & Safari Installation
+                    </div>
+                    <ol style="font-size:12px;color:var(--text-sub);padding-left:20px;margin:0;line-height:1.6;">
+                        <li>Open TypeMaster in Safari on your iPhone/iPad.</li>
+                        <li>Tap the <strong>Share button (⎋)</strong> at the bottom of Safari.</li>
+                        <li>Scroll down and tap <strong>"Add to Home Screen (➕)"</strong>.</li>
+                    </ol>
+                </div>
+
+                <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;">
+                    <div style="font-weight:700;color:#fff;font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:8px;">
+                        <span>💻</span> Windows & Mac Desktop App
+                    </div>
+                    <ol style="font-size:12px;color:var(--text-sub);padding-left:20px;margin:0;line-height:1.6;">
+                        <li>Click the <strong>Install icon (⊕)</strong> in your browser's address bar.</li>
+                        <li>Or click the <strong>Install App</strong> button above to launch as a standalone desktop app.</li>
+                    </ol>
                 </div>
             </div>
         </div>
