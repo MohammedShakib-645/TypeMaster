@@ -1504,6 +1504,106 @@ document.addEventListener('DOMContentLoaded', () => {
         navigator.serviceWorker.register('./service-worker.js').catch(() => {});
     }
 
+    // Student Auth Modal Handlers
+    if (typeof AuthEngine !== 'undefined') {
+        const activeStudent = AuthEngine.getActiveStudent();
+        if (activeStudent) {
+            const labelEl = $('topbar-student-name');
+            if (labelEl) labelEl.textContent = activeStudent.fullName || activeStudent.username;
+        }
+
+        const btnOpenAuth = $('btn-open-student-auth');
+        if (btnOpenAuth) {
+            btnOpenAuth.onclick = () => {
+                const current = AuthEngine.getActiveStudent();
+                if (current) {
+                    if (confirm(`Logged in as ${current.fullName} (${current.email}).\n\nDo you want to log out?`)) {
+                        AuthEngine.logout();
+                    }
+                } else {
+                    const modal = $('student-auth-modal');
+                    if (modal) modal.classList.add('open');
+                }
+            };
+        }
+
+        const btnCloseAuth = $('btn-close-auth-modal');
+        if (btnCloseAuth) {
+            btnCloseAuth.onclick = () => {
+                const modal = $('student-auth-modal');
+                if (modal) modal.classList.remove('open');
+            };
+        }
+
+        const tabLogin = $('tab-login-btn');
+        const tabReg = $('tab-register-btn');
+        const formLogin = $('student-login-form');
+        const formReg = $('student-register-form');
+
+        if (tabLogin && tabReg) {
+            tabLogin.onclick = () => {
+                tabLogin.className = 'btn btn-primary btn-sm';
+                tabReg.className = 'btn btn-ghost btn-sm';
+                if (formLogin) formLogin.style.display = 'block';
+                if (formReg) formReg.style.display = 'none';
+            };
+            tabReg.onclick = () => {
+                tabReg.className = 'btn btn-primary btn-sm';
+                tabLogin.className = 'btn btn-ghost btn-sm';
+                if (formReg) formReg.style.display = 'block';
+                if (formLogin) formLogin.style.display = 'none';
+            };
+        }
+
+        if (formLogin) {
+            formLogin.onsubmit = (e) => {
+                e.preventDefault();
+                const inp = $('stu-login-input').value;
+                const pass = $('stu-login-pass').value;
+                const res = AuthEngine.login(inp, pass);
+                if (res.success) {
+                    showToast('👋', 'Welcome Back!', `Signed in as ${res.student.fullName}`);
+                    const modal = $('student-auth-modal');
+                    if (modal) modal.classList.remove('open');
+                    const labelEl = $('topbar-student-name');
+                    if (labelEl) labelEl.textContent = res.student.fullName;
+                } else {
+                    const alertEl = $('auth-alert-msg');
+                    if (alertEl) {
+                        alertEl.style.display = 'block';
+                        alertEl.textContent = res.message;
+                    }
+                }
+            };
+        }
+
+        if (formReg) {
+            formReg.onsubmit = (e) => {
+                e.preventDefault();
+                const name = $('reg-name').value;
+                const user = $('reg-user').value;
+                const email = $('reg-email').value;
+                const pass = $('reg-pass').value;
+                const conf = $('reg-conf').value;
+
+                const res = AuthEngine.register(name, user, email, pass, conf);
+                if (res.success) {
+                    showToast('🎉', 'Account Created!', `Welcome to TypeMaster, ${res.student.fullName}!`);
+                    const modal = $('student-auth-modal');
+                    if (modal) modal.classList.remove('open');
+                    const labelEl = $('topbar-student-name');
+                    if (labelEl) labelEl.textContent = res.student.fullName;
+                } else {
+                    const alertEl = $('auth-alert-msg');
+                    if (alertEl) {
+                        alertEl.style.display = 'block';
+                        alertEl.textContent = res.message;
+                    }
+                }
+            };
+        }
+    }
+
     // Initial render
     const params = new URLSearchParams(window.location.search);
     const initialView = params.get('view') || 'home';

@@ -2,7 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <title>TypeMaster — Administrator Portal</title>
+    <title>TypeMaster — Administrator Portal LMS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
@@ -15,34 +15,34 @@
 <body>
 
     <!-- ═══════════════════════════════════════════════════════════
-         LOGIN MODAL OVERLAY (Shown if not authenticated)
+         LOGIN MODAL OVERLAY
     ═══════════════════════════════════════════════════════════ -->
     <div id="admin-login-overlay" class="admin-login-overlay">
         <div class="admin-login-card glass-card">
             <div class="admin-login-brand">
                 <span class="brand-icon">⚡</span>
-                <h2>TypeMaster Admin</h2>
-                <p>Administrator Authentication Required</p>
+                <h2>TypeMaster Admin Portal</h2>
+                <p>Learning Management System Authentication</p>
             </div>
 
             <div id="login-lockout-msg" class="alert alert-danger" style="display:none;margin-bottom:16px;"></div>
 
             <form id="admin-login-form">
                 <div class="form-group">
-                    <label for="admin-email">Admin Email</label>
-                    <input type="email" id="admin-email" class="form-input" value="mohammedshakib663@gmail.com" placeholder="mohammedshakib663@gmail.com" required autocomplete="username">
+                    <label for="admin-email">Administrator Email</label>
+                    <input type="email" id="admin-email" class="form-input" value="admin@example.com" placeholder="admin@example.com" required autocomplete="username">
                 </div>
                 <div class="form-group">
                     <label for="admin-password">Password</label>
-                    <input type="password" id="admin-password" class="form-input" value="MOHDshakib" placeholder="MOHDshakib" required autocomplete="current-password">
+                    <input type="password" id="admin-password" class="form-input" value="ChangeMe@123" placeholder="ChangeMe@123" required autocomplete="current-password">
                 </div>
                 <button type="submit" class="btn btn-primary btn-lg" style="width:100%;margin-top:12px;" id="btn-admin-login">
-                    🔑 Sign In to Admin Panel
+                    🔑 Sign In to Admin LMS
                 </button>
             </form>
 
             <div class="security-demo-note">
-                🔒 Protected System — Unauthorized access is prohibited. <br>
+                🔒 Protected System — Default: <code>admin@example.com</code> / <code>ChangeMe@123</code> <br>
                 <a href="index.html" style="color:var(--primary);text-decoration:none;font-weight:700;">← Return to Student App</a>
             </div>
         </div>
@@ -54,22 +54,22 @@
     <div id="force-password-modal" class="modal-overlay" style="display:none;">
         <div class="modal-card glass-card" style="max-width:480px;">
             <div class="modal-header">
-                <h3>⚠️ Change Default Password</h3>
+                <h3>⚠️ Update Default Password</h3>
             </div>
             <div class="modal-body">
                 <p style="font-size:13px;color:var(--text-sub);margin-bottom:16px;">
-                    You are logged in with the default administrator password. For security, please update your password before proceeding.
+                    You are currently using default setup credentials. Please create a custom administrator password before continuing.
                 </p>
                 <form id="force-pass-form">
                     <div class="form-group">
-                        <label>New Password</label>
-                        <input type="password" id="new-admin-pass" class="form-input" placeholder="At least 8 characters" required minlength="8">
+                        <label>New Administrator Password</label>
+                        <input type="password" id="new-admin-pass" class="form-input" placeholder="At least 6 characters" required minlength="6">
                     </div>
                     <div class="form-group">
-                        <label>Confirm New Password</label>
-                        <input type="password" id="confirm-admin-pass" class="form-input" placeholder="Re-enter new password" required minlength="8">
+                        <label>Confirm Password</label>
+                        <input type="password" id="confirm-admin-pass" class="form-input" placeholder="Re-enter password" required minlength="6">
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width:100%;margin-top:12px;">🔒 Save New Password</button>
+                    <button type="submit" class="btn btn-primary" style="width:100%;margin-top:12px;">🔒 Save & Access LMS Dashboard</button>
                 </form>
             </div>
         </div>
@@ -79,16 +79,18 @@
          MAIN ADMIN LAYOUT
     ═══════════════════════════════════════════════════════════ -->
     <div class="app-layout" id="admin-main-app" style="display:none;">
-        <!-- Admin Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-logo">
                 <span class="logo-icon">⚡</span>
-                <span class="logo-text">TypeMaster <small style="color:var(--warn);font-size:10px;display:block;">ADMIN PORTAL</small></span>
+                <span class="logo-text">TypeMaster <small style="color:var(--warn);font-size:10px;display:block;">ADMIN LMS</small></span>
             </div>
 
             <nav class="nav-menu">
                 <a class="nav-link active" data-admin-view="dashboard" href="#">
                     <span class="nav-icon">📊</span> Overview Dashboard
+                </a>
+                <a class="nav-link" data-admin-view="students" href="#">
+                    <span class="nav-icon">👥</span> Student Management
                 </a>
                 <a class="nav-link" data-admin-view="curriculum" href="#">
                     <span class="nav-icon">📚</span> 300 Lessons Manager
@@ -102,6 +104,9 @@
                 <a class="nav-link" data-admin-view="achievements" href="#">
                     <span class="nav-icon">🏆</span> Achievements Config
                 </a>
+                <a class="nav-link" data-admin-view="reports" href="#">
+                    <span class="nav-icon">📈</span> Analytics & Reports
+                </a>
                 <a class="nav-link" data-admin-view="security" href="#">
                     <span class="nav-icon">🔒</span> Security & Password
                 </a>
@@ -114,37 +119,38 @@
             </div>
         </aside>
 
-        <!-- Main Workspace -->
         <main class="main-content">
-            <!-- Header -->
             <header class="top-bar">
                 <div class="top-bar-title" id="admin-page-title">Overview Dashboard</div>
                 <div style="display:flex;align-items:center;gap:12px;">
-                    <span class="badge badge-warn">⚙️ Admin Mode</span>
-                    <span style="font-size:12px;color:var(--text-muted);" id="admin-user-display">mohammedshakib663@gmail.com</span>
+                    <span class="badge badge-warn">⚙️ Admin Active</span>
+                    <span style="font-size:12px;color:var(--text-muted);" id="admin-user-display">admin@example.com</span>
                     <a href="index.html" class="btn btn-ghost btn-sm">👁️ Student View</a>
                 </div>
             </header>
 
-            <!-- Security Alert Banner -->
             <div style="background:rgba(245,158,11,0.1);border:1px solid var(--warn);padding:10px 16px;border-radius:10px;margin-bottom:20px;font-size:12px;color:var(--warn);display:flex;align-items:center;justify-content:space-between;">
-                <span>ℹ️ <strong>Demonstration Security Notice:</strong> Client-side authentication active for local setup. Replace with server-side OAuth/JWT before public deployment.</span>
-                <span style="font-weight:800;">TypeMaster v3.0</span>
+                <span>ℹ️ <strong>Demonstration Security Notice:</strong> Authentication state saved locally. Upgrade to server-side OAuth/JWT before public deployment.</span>
+                <span style="font-weight:800;">TypeMaster LMS v3.0</span>
             </div>
 
-            <!-- Content Area -->
             <div class="content-body">
                 <!-- VIEW 1: OVERVIEW DASHBOARD -->
                 <section id="admin-view-dashboard" class="admin-view-section active">
                     <div class="stats-overview-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px;margin-bottom:24px;">
                         <div class="glass-card" style="padding:20px;">
-                            <div style="font-size:11px;color:var(--text-sub);text-transform:uppercase;font-weight:700;">Total Curriculum</div>
+                            <div style="font-size:11px;color:var(--text-sub);text-transform:uppercase;font-weight:700;">Total Students</div>
+                            <div style="font-size:32px;font-weight:900;color:var(--primary);" id="admin-stat-students-count">0 Registered</div>
+                            <div style="font-size:12px;color:var(--success);margin-top:4px;">Active Accounts</div>
+                        </div>
+                        <div class="glass-card" style="padding:20px;">
+                            <div style="font-size:11px;color:var(--text-sub);text-transform:uppercase;font-weight:700;">Curriculum Scope</div>
                             <div style="font-size:32px;font-weight:900;color:var(--primary);">300 Lessons</div>
                             <div style="font-size:12px;color:var(--success);margin-top:4px;">15 Units Active</div>
                         </div>
                         <div class="glass-card" style="padding:20px;">
                             <div style="font-size:11px;color:var(--text-sub);text-transform:uppercase;font-weight:700;">Milestone Certificates</div>
-                            <div style="font-size:32px;font-weight:900;color:var(--warn);" id="admin-stat-certs">6 Levels</div>
+                            <div style="font-size:32px;font-weight:900;color:var(--warn);">6 Levels</div>
                             <div style="font-size:12px;color:var(--text-sub);margin-top:4px;">Signed by Mohammed Shakib</div>
                         </div>
                         <div class="glass-card" style="padding:20px;">
@@ -152,29 +158,50 @@
                             <div style="font-size:20px;font-weight:900;color:#FFF;" id="admin-stat-provider">Mohammed Shakib</div>
                             <div style="font-size:12px;color:var(--primary);margin-top:4px;">Founder & Director</div>
                         </div>
-                        <div class="glass-card" style="padding:20px;">
-                            <div style="font-size:11px;color:var(--text-sub);text-transform:uppercase;font-weight:700;">System Health</div>
-                            <div style="font-size:20px;font-weight:900;color:var(--success);">100% Operational</div>
-                            <div style="font-size:12px;color:var(--text-sub);margin-top:4px;">PWA & LocalStorage Active</div>
-                        </div>
                     </div>
 
-                    <div class="glass-card" style="padding:24px;margin-bottom:24px;">
-                        <h3 style="font-size:16px;margin-bottom:14px;">⚡ Quick Management Actions</h3>
+                    <div class="glass-card" style="padding:24px;">
+                        <h3 style="font-size:16px;margin-bottom:14px;">⚡ LMS Quick Management Actions</h3>
                         <div style="display:flex;gap:12px;flex-wrap:wrap;">
-                            <button class="btn btn-primary" onclick="switchAdminView('curriculum')">📚 Manage 300 Lessons</button>
+                            <button class="btn btn-primary" onclick="switchAdminView('students')">👥 Manage Registered Students</button>
+                            <button class="btn btn-ghost" onclick="switchAdminView('curriculum')">📚 Manage 300 Lessons</button>
                             <button class="btn btn-ghost" onclick="switchAdminView('certificates')">📜 Provider & Certificate Settings</button>
-                            <button class="btn btn-ghost" onclick="switchAdminView('security')">🔒 Change Admin Password</button>
+                            <button class="btn btn-ghost" onclick="switchAdminView('reports')">📈 Export Reports</button>
                         </div>
                     </div>
                 </section>
 
-                <!-- VIEW 2: LESSON MANAGEMENT -->
+                <!-- VIEW 2: STUDENT MANAGEMENT -->
+                <section id="admin-view-students" class="admin-view-section" style="display:none;">
+                    <div class="glass-card" style="padding:24px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                            <h3 style="font-size:18px;">👥 Registered Student Management</h3>
+                            <button class="btn btn-ghost btn-sm" onclick="exportAdminReport('students')">📥 Export Students JSON</button>
+                        </div>
+                        <div style="overflow-x:auto;">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Status</th>
+                                        <th>Joined Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-students-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 3: LESSON MANAGEMENT -->
                 <section id="admin-view-curriculum" class="admin-view-section" style="display:none;">
                     <div class="glass-card" style="padding:24px;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
                             <h3 style="font-size:18px;">📚 300-Lesson Curriculum Overview</h3>
-                            <span class="badge badge-primary">300 Active Lessons</span>
+                            <button class="btn btn-ghost btn-sm" onclick="exportAdminReport('curriculum')">📥 Export Lessons JSON</button>
                         </div>
                         <div style="max-height:500px;overflow-y:auto;">
                             <table class="admin-table">
@@ -194,10 +221,10 @@
                     </div>
                 </section>
 
-                <!-- VIEW 3: CERTIFICATE MANAGEMENT -->
+                <!-- VIEW 4: CERTIFICATE MANAGEMENT -->
                 <section id="admin-view-certificates" class="admin-view-section" style="display:none;">
                     <div class="glass-card" style="padding:24px;margin-bottom:24px;">
-                        <h3 style="font-size:18px;margin-bottom:16px;">📜 Provider Details Configuration</h3>
+                        <h3 style="font-size:18px;margin-bottom:16px;">📜 Certificate Provider Details</h3>
                         <form id="admin-provider-form">
                             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;">
                                 <div class="form-group">
@@ -223,18 +250,18 @@
                     </div>
                 </section>
 
-                <!-- VIEW 4: PRACTICE TEXTS -->
+                <!-- VIEW 5: PRACTICE TEXTS -->
                 <section id="admin-view-texts" class="admin-view-section" style="display:none;">
                     <div class="glass-card" style="padding:24px;">
                         <h3 style="font-size:18px;margin-bottom:14px;">📝 Custom Practice Text Repository</h3>
-                        <p style="font-size:13px;color:var(--text-sub);margin-bottom:16px;">Manage practice text categories: Easy, Medium, Hard, Quotes, Numbers, Code.</p>
+                        <p style="font-size:13px;color:var(--text-sub);margin-bottom:16px;">Manage categories: Easy, Medium, Hard, Quotes, Numbers, Code.</p>
                         <div style="background:rgba(0,0,0,0.3);padding:16px;border-radius:12px;font-family:monospace;font-size:13px;color:var(--primary);">
                             TEXT_DATA Repository Active (10 Easy, 10 Medium, 10 Hard, 8 Quotes, 5 Numbers, 7 Symbols, 15 Code Snippets)
                         </div>
                     </div>
                 </section>
 
-                <!-- VIEW 5: ACHIEVEMENTS -->
+                <!-- VIEW 6: ACHIEVEMENTS -->
                 <section id="admin-view-achievements" class="admin-view-section" style="display:none;">
                     <div class="glass-card" style="padding:24px;">
                         <h3 style="font-size:18px;margin-bottom:14px;">🏆 Achievement Badges Configuration</h3>
@@ -242,7 +269,20 @@
                     </div>
                 </section>
 
-                <!-- VIEW 6: SECURITY & PASSWORD -->
+                <!-- VIEW 7: ANALYTICS & REPORTS -->
+                <section id="admin-view-reports" class="admin-view-section" style="display:none;">
+                    <div class="glass-card" style="padding:24px;">
+                        <h3 style="font-size:18px;margin-bottom:14px;">📈 Analytics Data Reports Exporter</h3>
+                        <p style="font-size:13px;color:var(--text-sub);margin-bottom:20px;">Download complete application logs and dataset reports in JSON/CSV formats.</p>
+                        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                            <button class="btn btn-primary" onclick="exportAdminReport('students')">📥 Export Students Report</button>
+                            <button class="btn btn-ghost" onclick="exportAdminReport('certs')">📥 Export Certificates Ledger</button>
+                            <button class="btn btn-ghost" onclick="exportAdminReport('curriculum')">📥 Export 300 Curriculum List</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 8: SECURITY & PASSWORD -->
                 <section id="admin-view-security" class="admin-view-section" style="display:none;">
                     <div class="glass-card" style="padding:24px;max-width:560px;">
                         <h3 style="font-size:18px;margin-bottom:16px;">🔒 Change Administrator Password</h3>
@@ -253,13 +293,13 @@
                             </div>
                             <div class="form-group">
                                 <label>New Password</label>
-                                <input type="password" id="adm-new-pass" class="form-input" placeholder="At least 8 characters" required minlength="8">
+                                <input type="password" id="adm-new-pass" class="form-input" placeholder="At least 6 characters" required minlength="6">
                             </div>
                             <div class="form-group">
-                                <label>Confirm New Password</label>
-                                <input type="password" id="adm-conf-pass" class="form-input" placeholder="Confirm new password" required minlength="8">
+                                <label>Confirm Password</label>
+                                <input type="password" id="adm-conf-pass" class="form-input" placeholder="Confirm password" required minlength="6">
                             </div>
-                            <button type="submit" class="btn btn-primary" style="margin-top:10px;">🔒 Update Administrator Password</button>
+                            <button type="submit" class="btn btn-primary" style="margin-top:10px;">🔒 Update Password</button>
                         </form>
                     </div>
                 </section>
@@ -267,8 +307,8 @@
         </main>
     </div>
 
-    <!-- Scripts -->
     <script src="js/curriculum.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/certificate.js"></script>
     <script src="js/admin.js"></script>
 
