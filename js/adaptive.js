@@ -3,32 +3,7 @@
  * Analyzes weak keys, weak fingers, and generates personalized lesson recommendations.
  */
 
-// Maps every keyboard key to its assigned finger
-const KEY_FINGER_MAP = {
-    // Left Pinky
-    '`':true,'~':true,'1':true,'!':true,'q':true,'Q':true,'a':true,'A':true,'z':true,'Z':true,
-    '\t':true,'Caps':true,
-    // Left Ring
-    '2':true,'@':true,'w':true,'W':true,'s':true,'S':true,'x':true,'X':true,
-    // Left Middle
-    '3':true,'#':true,'e':true,'E':true,'d':true,'D':true,'c':true,'C':true,
-    // Left Index (F + G)
-    '4':true,'$':true,'5':true,'%':true,'r':true,'R':true,'t':true,'T':true,
-    'f':true,'F':true,'g':true,'G':true,'v':true,'V':true,'b':true,'B':true,
-    // Right Index (J + H)
-    '6':true,'^':true,'7':true,'&':true,'y':true,'Y':true,'u':true,'U':true,
-    'h':true,'H':true,'j':true,'J':true,'n':true,'N':true,'m':true,'M':true,
-    // Right Middle (K)
-    '8':true,'*':true,'i':true,'I':true,'k':true,'K':true,',':true,'<':true,
-    // Right Ring (L)
-    '9':true,'(':true,'o':true,'O':true,'l':true,'L':true,'.':true,'>':true,
-    // Right Pinky
-    '0':true,')':true,'-':true,'_':true,'=':true,'+':true,'p':true,'P':true,
-    '[':true,'{':true,']':true,'}':true,';':true,':':true,"'":true,'"':true,
-    '/':true,'?':true,'\\':true,'|':true,
-    // Thumbs
-    ' ':true
-};
+
 
 const KEY_TO_FINGER = {
     '`':'Left Pinky','~':'Left Pinky','1':'Left Pinky','!':'Left Pinky','q':'Left Pinky','Q':'Left Pinky',

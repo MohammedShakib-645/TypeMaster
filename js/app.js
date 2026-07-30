@@ -1850,70 +1850,82 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        // Google Sign-In Button Trigger
+        // Google Sign-In Button Trigger & Inline Box Handling
         const btnGoogle = $('btn-google-login');
+        const googleBox = $('google-fast-login-box');
+        const btnCloseGoogleBox = $('btn-close-google-box');
+        const btnSubmitGoogleLogin = $('btn-submit-google-login');
+
         if (btnGoogle) {
             btnGoogle.onclick = () => {
-                if (window.google && google.accounts && google.accounts.id) {
+                // Check if user/admin configured a custom real Google Client ID
+                const customClientId = localStorage.getItem('tm_google_client_id');
+                if (customClientId && window.google && google.accounts && google.accounts.id) {
                     try {
                         google.accounts.id.initialize({
-                            client_id: "1083928172931-demo.apps.googleusercontent.com",
+                            client_id: customClientId,
                             callback: window.handleGoogleSignInCallback
                         });
-                        google.accounts.id.prompt((notification) => {
-                            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                                const gEmail = prompt('Enter your Google Email Address:');
-                                if (!gEmail) return;
-                                const gName = prompt('Enter your Full Name:', gEmail.split('@')[0]);
-                                const res = AuthEngine.loginWithGoogle({
-                                    email: gEmail,
-                                    fullName: gName || gEmail.split('@')[0],
-                                    avatar: '🌐',
-                                    googleId: 'G-' + Date.now()
-                                });
-                                if (res.success) {
-                                    showToast('🌐', 'Google Login Success!', `Welcome, ${res.student.fullName}`);
-                                    const modal = $('student-auth-modal');
-                                    if (modal) modal.classList.remove('open');
-                                    const labelEl = $('topbar-student-name');
-                                    if (labelEl) labelEl.textContent = res.student.fullName;
-                                }
-                            }
-                        });
-                    } catch (err) {
-                        const gEmail = prompt('Enter your Google Email Address:');
-                        if (!gEmail) return;
-                        const gName = prompt('Enter your Full Name:', gEmail.split('@')[0]);
-                        const res = AuthEngine.loginWithGoogle({
-                            email: gEmail,
-                            fullName: gName || gEmail.split('@')[0],
-                            avatar: '🌐',
-                            googleId: 'G-' + Date.now()
-                        });
-                        if (res.success) {
-                            showToast('🌐', 'Google Login Success!', `Welcome, ${res.student.fullName}`);
-                            const modal = $('student-auth-modal');
-                            if (modal) modal.classList.remove('open');
-                            const labelEl = $('topbar-student-name');
-                            if (labelEl) labelEl.textContent = res.student.fullName;
-                        }
+                        google.accounts.id.prompt();
+                        return;
+                    } catch (e) {
+                        console.warn('Google GSI init failed with custom client id:', e);
                     }
+                }
+
+                // Toggle inline Google fast sign-in box (avoids Google GSI "Access Blocked" popup error)
+                if (googleBox) {
+                    const isHidden = googleBox.style.display === 'none' || !googleBox.style.display;
+                    googleBox.style.display = isHidden ? 'block' : 'none';
+                    if (isHidden) {
+                        const emailInput = $('g-login-email-input');
+                        if (emailInput) emailInput.focus();
+                    }
+                }
+            };
+        }
+
+        if (btnCloseGoogleBox && googleBox) {
+            btnCloseGoogleBox.onclick = () => {
+                googleBox.style.display = 'none';
+            };
+        }
+
+        if (btnSubmitGoogleLogin) {
+            btnSubmitGoogleLogin.onclick = () => {
+                const emailInput = $('g-login-email-input');
+                const nameInput = $('g-login-name-input');
+                const gEmail = (emailInput ? emailInput.value : '').trim();
+                const gName = (nameInput ? nameInput.value : '').trim();
+
+                if (!gEmail || !gEmail.includes('@')) {
+                    const alertEl = $('auth-alert-msg');
+                    if (alertEl) {
+                        alertEl.style.display = 'block';
+                        alertEl.textContent = 'Please enter a valid Google email address.';
+                    }
+                    return;
+                }
+
+                const res = AuthEngine.loginWithGoogle({
+                    email: gEmail,
+                    fullName: gName || gEmail.split('@')[0],
+                    avatar: '🌐',
+                    googleId: 'G-' + Date.now()
+                });
+
+                if (res.success) {
+                    showToast('🌐', 'Google Login Success!', `Welcome back, ${res.student.fullName}`);
+                    const modal = $('student-auth-modal');
+                    if (modal) modal.classList.remove('open');
+                    const labelEl = $('topbar-student-name');
+                    if (labelEl) labelEl.textContent = res.student.fullName;
+                    if (googleBox) googleBox.style.display = 'none';
                 } else {
-                    const gEmail = prompt('Enter your Google Email Address for Google Sign-In:');
-                    if (!gEmail) return;
-                    const gName = prompt('Enter your Full Name:', gEmail.split('@')[0]);
-                    const res = AuthEngine.loginWithGoogle({
-                        email: gEmail,
-                        fullName: gName || gEmail.split('@')[0],
-                        avatar: '🌐',
-                        googleId: 'G-' + Date.now()
-                    });
-                    if (res.success) {
-                        showToast('🌐', 'Google Login Success!', `Welcome, ${res.student.fullName}`);
-                        const modal = $('student-auth-modal');
-                        if (modal) modal.classList.remove('open');
-                        const labelEl = $('topbar-student-name');
-                        if (labelEl) labelEl.textContent = res.student.fullName;
+                    const alertEl = $('auth-alert-msg');
+                    if (alertEl) {
+                        alertEl.style.display = 'block';
+                        alertEl.textContent = res.message || 'Google login failed.';
                     }
                 }
             };
