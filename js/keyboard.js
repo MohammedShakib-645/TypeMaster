@@ -1,6 +1,7 @@
 /**
  * TypeMaster - Visual QWERTY Keyboard Component
  */
+
 const KEYBOARD_ROWS = [
     [{label:'`',code:'Backquote',f:'pl'},{label:'1',code:'Digit1',f:'pl'},{label:'2',code:'Digit2',f:'rl'},{label:'3',code:'Digit3',f:'ml'},{label:'4',code:'Digit4',f:'il'},{label:'5',code:'Digit5',f:'il'},{label:'6',code:'Digit6',f:'ir'},{label:'7',code:'Digit7',f:'ir'},{label:'8',code:'Digit8',f:'mr'},{label:'9',code:'Digit9',f:'rr'},{label:'0',code:'Digit0',f:'pr'},{label:'-',code:'Minus',f:'pr'},{label:'=',code:'Equal',f:'pr'},{label:'Bksp',code:'Backspace',f:'pr',w:90}],
     [{label:'Tab',code:'Tab',f:'pl',w:70},{label:'Q',code:'KeyQ',f:'pl'},{label:'W',code:'KeyW',f:'rl'},{label:'E',code:'KeyE',f:'ml'},{label:'R',code:'KeyR',f:'il'},{label:'T',code:'KeyT',f:'il'},{label:'Y',code:'KeyY',f:'ir'},{label:'U',code:'KeyU',f:'ir'},{label:'I',code:'KeyI',f:'mr'},{label:'O',code:'KeyO',f:'rr'},{label:'P',code:'KeyP',f:'pr'},{label:'[',code:'BracketLeft',f:'pr'},{label:']',code:'BracketRight',f:'pr'},{label:'\\',code:'Backslash',f:'pr',w:70}],
@@ -14,19 +15,30 @@ const FINGER_COLORS = {
     ir: '#8B5CF6', mr: '#EC4899', rr: '#F59E0B', pr: '#EF4444',
     th: '#94A3B8'
 };
+
 const FINGER_LABELS = {
     pl:'Left Pinky', rl:'Left Ring', ml:'Left Middle', il:'Left Index',
     ir:'Right Index', mr:'Right Middle', rr:'Right Ring', pr:'Right Pinky',
     th:'Thumb'
 };
 
-class VisualKeyboard {
+class VirtualKeyboard {
     constructor(containerId) {
-        this.el = document.getElementById(containerId);
+        this.el = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
         this.keyEls = {};
         this.activeTarget = null;
+        this._onKeyDown = this._handleKeyDown.bind(this);
+        this._onKeyUp = this._handleKeyUp.bind(this);
+    }
+
+    render() {
         this._buildDOM();
         this._bindPhysical();
+    }
+
+    destroy() {
+        window.removeEventListener('keydown', this._onKeyDown);
+        window.removeEventListener('keyup', this._onKeyUp);
     }
 
     _buildDOM() {
@@ -70,17 +82,23 @@ class VisualKeyboard {
     }
 
     _bindPhysical() {
-        window.addEventListener('keydown', e => {
-            const k = this.keyEls[e.code];
-            if (k) k.classList.add('vkb-pressed');
-        });
-        window.addEventListener('keyup', e => {
-            const k = this.keyEls[e.code];
-            if (k) k.classList.remove('vkb-pressed');
-        });
+        window.removeEventListener('keydown', this._onKeyDown);
+        window.removeEventListener('keyup', this._onKeyUp);
+        window.addEventListener('keydown', this._onKeyDown);
+        window.addEventListener('keyup', this._onKeyUp);
     }
 
-    highlightNext(char) {
+    _handleKeyDown(e) {
+        const k = this.keyEls[e.code];
+        if (k) k.classList.add('vkb-pressed');
+    }
+
+    _handleKeyUp(e) {
+        const k = this.keyEls[e.code];
+        if (k) k.classList.remove('vkb-pressed');
+    }
+
+    highlightKey(char) {
         if (this.activeTarget) this.activeTarget.classList.remove('vkb-target');
         if (!char) return;
 
@@ -98,4 +116,11 @@ class VisualKeyboard {
             this.activeTarget.classList.add('vkb-target');
         }
     }
+
+    highlightNext(char) {
+        this.highlightKey(char);
+    }
 }
+
+// Alias for backwards compatibility
+const VisualKeyboard = VirtualKeyboard;

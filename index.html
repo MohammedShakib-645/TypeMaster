@@ -413,103 +413,173 @@
                     <div class="page-header">
                         <h2>🏆 Achievements</h2>
                         <p>Unlock badges by practicing consistently and improving your speed.</p>
+                    </div>
                     <div id="achievements-grid" class="achievements-grid"></div>
                 </section>
 
 
-<!-- ════════════════════════════════════
+                <!-- ════════════════════════════════════
      VIEW: FINGER GUIDE
 ════════════════════════════════════ -->
-<section id="view-finger" class="view-section">
-    <div class="page-header">
-        <h2>🖐️ Finger Placement Guide</h2>
-        <p>Learn exactly which finger types each key. Click any finger or key below to highlight it.</p>
-    </div>
+                <section id="view-finger" class="view-section">
+                    <div class="page-header">
+                        <h2>🖐️ Finger Placement Guide</h2>
+                        <p>Learn exactly which finger types each key. Click any finger or key below to highlight it.</p>
+                    </div>
 
-    <!-- Interactive Hands Display -->
-    <div class="glass-card" style="margin-bottom:20px;overflow:hidden;">
-        <div style="padding:20px 24px 0;">
-            <div class="stats-section-title">Interactive Finger Map — Click any finger to see its keys</div>
-        </div>
-        <div id="finger-guide-main"></div>
-    </div>
+                    <!-- Interactive Hands Display -->
+                    <div class="glass-card" style="margin-bottom:20px;overflow:hidden;">
+                        <div style="padding:20px 24px 0;">
+                            <div class="stats-section-title">Interactive Finger Map — Click any finger to see its keys
+                            </div>
+                        </div>
+                        <div id="finger-guide-main"></div>
+                    </div>
 
-    <!-- Key Reference Grid -->
-    <div class="glass-card" style="padding:24px;margin-bottom:20px;">
-        <div class="stats-section-title" style="margin-bottom:16px;">Key Assignment by Finger</div>
-        <div class="finger-key-reference" id="finger-key-reference"></div>
-    </div>
+                    <!-- Key Reference Grid -->
+                    <div class="glass-card" style="padding:24px;margin-bottom:20px;">
+                        <div class="stats-section-title" style="margin-bottom:16px;">Key Assignment by Finger</div>
+                        <div class="finger-key-reference" id="finger-key-reference"></div>
+                    </div>
 
-    <!-- Home Row Reference -->
-    <div class="glass-card" style="padding:24px;margin-bottom:20px;">
-        <div class="stats-section-title" style="margin-bottom:16px;">🏠 Home Row — Your Starting Position</div>
-        <p style="color:var(--text-sub);font-size:14px;margin-bottom:16px;line-height:1.7;">Always return your fingers to the home row after each keystroke. The <kbd>F</kbd> and <kbd>J</kbd> keys have tactile bumps to help you locate position without looking.</p>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:20px;background:rgba(0,0,0,0.2);border-radius:12px;margin-bottom:16px;">
-            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#EF4444;background:#EF444420;color:#EF4444">A</kbd><div style="font-size:10px;color:#EF4444;margin-top:6px">Left Pinky</div></div>
-            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#F59E0B;background:#F59E0B20;color:#F59E0B">S</kbd><div style="font-size:10px;color:#F59E0B;margin-top:6px">Left Ring</div></div>
-            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#22C55E;background:#22C55E20;color:#22C55E">D</kbd><div style="font-size:10px;color:#22C55E;margin-top:6px">Left Middle</div></div>
-            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#3B82F6;background:#3B82F620;color:#3B82F6">F</kbd><div style="font-size:10px;color:#3B82F6;margin-top:6px">Left Index ●</div></div>
-            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#3B82F6;background:#3B82F610;color:#3B82F6">G</kbd><div style="font-size:10px;color:#3B82F6;margin-top:6px">Left Index</div></div>
-            <div style="width:20px;"></div>
-            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#8B5CF6;background:#8B5CF610;color:#8B5CF6">H</kbd><div style="font-size:10px;color:#8B5CF6;margin-top:6px">Right Index</div></div>
-            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#8B5CF6;background:#8B5CF620;color:#8B5CF6">J</kbd><div style="font-size:10px;color:#8B5CF6;margin-top:6px">Right Index ●</div></div>
-            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#EC4899;background:#EC489920;color:#EC4899">K</kbd><div style="font-size:10px;color:#EC4899;margin-top:6px">Right Middle</div></div>
-            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#F59E0B;background:#F59E0B20;color:#F59E0B">L</kbd><div style="font-size:10px;color:#F59E0B;margin-top:6px">Right Ring</div></div>
-            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#EF4444;background:#EF444420;color:#EF4444">;</kbd><div style="font-size:10px;color:#EF4444;margin-top:6px">Right Pinky</div></div>
-        </div>
-        <div style="text-align:center;">
-            <kbd style="font-size:16px;padding:8px 60px;border-color:#94A3B8;background:rgba(148,163,184,0.1);color:#94A3B8">SPACE BAR — Both Thumbs</kbd>
-        </div>
-    </div>
+                    <!-- Home Row Reference -->
+                    <div class="glass-card" style="padding:24px;margin-bottom:20px;">
+                        <div class="stats-section-title" style="margin-bottom:16px;">🏠 Home Row — Your Starting
+                            Position</div>
+                        <p style="color:var(--text-sub);font-size:14px;margin-bottom:16px;line-height:1.7;">Always
+                            return your fingers to the home row after each keystroke. The <kbd>F</kbd> and <kbd>J</kbd>
+                            keys have tactile bumps to help you locate position without looking.</p>
+                        <div
+                            style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:20px;background:rgba(0,0,0,0.2);border-radius:12px;margin-bottom:16px;">
+                            <div style="text-align:center;"><kbd
+                                    style="font-size:20px;padding:10px 14px;border-color:#EF4444;background:#EF444420;color:#EF4444">A</kbd>
+                                <div style="font-size:10px;color:#EF4444;margin-top:6px">Left Pinky</div>
+                            </div>
+                            <div style="text-align:center;"><kbd
+                                    style="font-size:20px;padding:10px 14px;border-color:#F59E0B;background:#F59E0B20;color:#F59E0B">S</kbd>
+                                <div style="font-size:10px;color:#F59E0B;margin-top:6px">Left Ring</div>
+                            </div>
+                            <div style="text-align:center;"><kbd
+                                    style="font-size:20px;padding:10px 14px;border-color:#22C55E;background:#22C55E20;color:#22C55E">D</kbd>
+                                <div style="font-size:10px;color:#22C55E;margin-top:6px">Left Middle</div>
+                            </div>
+                            <div style="text-align:center;"><kbd
+                                    style="font-size:20px;padding:10px 14px;border-color:#3B82F6;background:#3B82F620;color:#3B82F6">F</kbd>
+                                <div style="font-size:10px;color:#3B82F6;margin-top:6px">Left Index ●</div>
+                            </div>
+                            <div style="text-align:center;"><kbd
+                                    style="font-size:20px;padding:10px 14px;border-color:#3B82F6;background:#3B82F610;color:#3B82F6">G</kbd>
+                                <div style="font-size:10px;color:#3B82F6;margin-top:6px">Left Index</div>
+                            </div>
+                            <div style="width:20px;"></div>
+                            <div style="text-align:center;"><kbd
+                                    style="font-size:20px;padding:10px 14px;border-color:#8B5CF6;background:#8B5CF610;color:#8B5CF6">H</kbd>
+                                <div style="font-size:10px;color:#8B5CF6;margin-top:6px">Right Index</div>
+                            </div>
+                            <div style="text-align:center;"><kbd
+                                    style="font-size:20px;padding:10px 14px;border-color:#8B5CF6;background:#8B5CF620;color:#8B5CF6">J</kbd>
+                                <div style="font-size:10px;color:#8B5CF6;margin-top:6px">Right Index ●</div>
+                            </div>
+                            <div style="text-align:center;"><kbd
+                                    style="font-size:20px;padding:10px 14px;border-color:#EC4899;background:#EC489920;color:#EC4899">K</kbd>
+                                <div style="font-size:10px;color:#EC4899;margin-top:6px">Right Middle</div>
+                            </div>
+                            <div style="text-align:center;"><kbd
+                                    style="font-size:20px;padding:10px 14px;border-color:#F59E0B;background:#F59E0B20;color:#F59E0B">L</kbd>
+                                <div style="font-size:10px;color:#F59E0B;margin-top:6px">Right Ring</div>
+                            </div>
+                            <div style="text-align:center;"><kbd
+                                    style="font-size:20px;padding:10px 14px;border-color:#EF4444;background:#EF444420;color:#EF4444">;</kbd>
+                                <div style="font-size:10px;color:#EF4444;margin-top:6px">Right Pinky</div>
+                            </div>
+                        </div>
+                        <div style="text-align:center;">
+                            <kbd
+                                style="font-size:16px;padding:8px 60px;border-color:#94A3B8;background:rgba(148,163,184,0.1);color:#94A3B8">SPACE
+                                BAR — Both Thumbs</kbd>
+                        </div>
+                    </div>
 
-    <!-- Posture Guide -->
-    <div class="glass-card" style="padding:24px;margin-bottom:20px;">
-        <div class="stats-section-title" style="margin-bottom:16px;">🪑 Proper Typing Posture</div>
-        <div class="posture-grid">
-            <div class="posture-card"><div class="posture-icon">🪑</div><div class="posture-title">Sit Up Straight</div><div class="posture-desc">Back straight and supported. Avoid slouching. Your spine should be aligned and comfortable throughout your session.</div></div>
-            <div class="posture-card"><div class="posture-icon">🦵</div><div class="posture-title">Feet Flat</div><div class="posture-desc">Both feet flat on the floor. Knees at a 90° angle. This prevents lower back strain during extended typing sessions.</div></div>
-            <div class="posture-card"><div class="posture-icon">💪</div><div class="posture-title">Elbows at 90°</div><div class="posture-desc">Elbows bent at ~90 degrees. Upper arms close to body. Shoulders relaxed and not raised up toward your ears.</div></div>
-            <div class="posture-card"><div class="posture-icon">✋</div><div class="posture-title">Level Wrists</div><div class="posture-desc">Wrists level with the keyboard — not bent up or down. Avoid resting wrists on the desk while actively typing keys.</div></div>
-            <div class="posture-card"><div class="posture-icon">👁️</div><div class="posture-title">Eyes on Screen</div><div class="posture-desc">Look at the screen, NOT the keyboard! Screen at eye level, arm's length away. Never look at your hands while typing.</div></div>
-            <div class="posture-card"><div class="posture-icon">⏰</div><div class="posture-title">Take Breaks</div><div class="posture-desc">Every 30 minutes, rest for 5 minutes. Shake wrists, stand up, and look away from screen to prevent repetitive strain injuries.</div></div>
-        </div>
-    </div>
+                    <!-- Posture Guide -->
+                    <div class="glass-card" style="padding:24px;margin-bottom:20px;">
+                        <div class="stats-section-title" style="margin-bottom:16px;">🪑 Proper Typing Posture</div>
+                        <div class="posture-grid">
+                            <div class="posture-card">
+                                <div class="posture-icon">🪑</div>
+                                <div class="posture-title">Sit Up Straight</div>
+                                <div class="posture-desc">Back straight and supported. Avoid slouching. Your spine
+                                    should be aligned and comfortable throughout your session.</div>
+                            </div>
+                            <div class="posture-card">
+                                <div class="posture-icon">🦵</div>
+                                <div class="posture-title">Feet Flat</div>
+                                <div class="posture-desc">Both feet flat on the floor. Knees at a 90° angle. This
+                                    prevents lower back strain during extended typing sessions.</div>
+                            </div>
+                            <div class="posture-card">
+                                <div class="posture-icon">💪</div>
+                                <div class="posture-title">Elbows at 90°</div>
+                                <div class="posture-desc">Elbows bent at ~90 degrees. Upper arms close to body.
+                                    Shoulders relaxed and not raised up toward your ears.</div>
+                            </div>
+                            <div class="posture-card">
+                                <div class="posture-icon">✋</div>
+                                <div class="posture-title">Level Wrists</div>
+                                <div class="posture-desc">Wrists level with the keyboard — not bent up or down. Avoid
+                                    resting wrists on the desk while actively typing keys.</div>
+                            </div>
+                            <div class="posture-card">
+                                <div class="posture-icon">👁️</div>
+                                <div class="posture-title">Eyes on Screen</div>
+                                <div class="posture-desc">Look at the screen, NOT the keyboard! Screen at eye level,
+                                    arm's length away. Never look at your hands while typing.</div>
+                            </div>
+                            <div class="posture-card">
+                                <div class="posture-icon">⏰</div>
+                                <div class="posture-title">Take Breaks</div>
+                                <div class="posture-desc">Every 30 minutes, rest for 5 minutes. Shake wrists, stand up,
+                                    and look away from screen to prevent repetitive strain injuries.</div>
+                            </div>
+                        </div>
+                    </div>
 
-    <!-- Both Hands Diagram Description -->
-    <div class="glass-card" style="padding:24px;margin-bottom:20px;">
-        <div class="stats-section-title" style="margin-bottom:16px;">✋🤚 Hand Position Guide</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;flex-wrap:wrap;">
-            <div>
-                <h3 style="font-size:15px;margin-bottom:12px;color:var(--primary)">LEFT HAND</h3>
-                <div style="font-size:13px;color:var(--text-sub);line-height:2;">
-                    <div>🔴 <strong>Pinky</strong> → A, Q, Z, 1, Shift, Tab, Caps</div>
-                    <div>🟡 <strong>Ring</strong> → S, W, X, 2</div>
-                    <div>🟢 <strong>Middle</strong> → D, E, C, 3</div>
-                    <div>🔵 <strong>Index</strong> → F, G, R, T, V, B, 4, 5</div>
-                    <div>⚪ <strong>Thumb</strong> → Spacebar</div>
-                </div>
-            </div>
-            <div>
-                <h3 style="font-size:15px;margin-bottom:12px;color:var(--purple, #8B5CF6)">RIGHT HAND</h3>
-                <div style="font-size:13px;color:var(--text-sub);line-height:2;">
-                    <div>⚪ <strong>Thumb</strong> → Spacebar</div>
-                    <div>🟣 <strong>Index</strong> → J, H, U, Y, M, N, 6, 7</div>
-                    <div>🩷 <strong>Middle</strong> → K, I, ,, 8</div>
-                    <div>🟡 <strong>Ring</strong> → L, O, ., 9</div>
-                    <div>🔴 <strong>Pinky</strong> → ;, P, /, 0, -, =, Enter, Shift</div>
-                </div>
-            </div>
-        </div>
-    </div>
+                    <!-- Both Hands Diagram Description -->
+                    <div class="glass-card" style="padding:24px;margin-bottom:20px;">
+                        <div class="stats-section-title" style="margin-bottom:16px;">✋🤚 Hand Position Guide</div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;flex-wrap:wrap;">
+                            <div>
+                                <h3 style="font-size:15px;margin-bottom:12px;color:var(--primary)">LEFT HAND</h3>
+                                <div style="font-size:13px;color:var(--text-sub);line-height:2;">
+                                    <div>🔴 <strong>Pinky</strong> → A, Q, Z, 1, Shift, Tab, Caps</div>
+                                    <div>🟡 <strong>Ring</strong> → S, W, X, 2</div>
+                                    <div>🟢 <strong>Middle</strong> → D, E, C, 3</div>
+                                    <div>🔵 <strong>Index</strong> → F, G, R, T, V, B, 4, 5</div>
+                                    <div>⚪ <strong>Thumb</strong> → Spacebar</div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 style="font-size:15px;margin-bottom:12px;color:var(--purple, #8B5CF6)">RIGHT HAND
+                                </h3>
+                                <div style="font-size:13px;color:var(--text-sub);line-height:2;">
+                                    <div>⚪ <strong>Thumb</strong> → Spacebar</div>
+                                    <div>🟣 <strong>Index</strong> → J, H, U, Y, M, N, 6, 7</div>
+                                    <div>🩷 <strong>Middle</strong> → K, I, ,, 8</div>
+                                    <div>🟡 <strong>Ring</strong> → L, O, ., 9</div>
+                                    <div>🔴 <strong>Pinky</strong> → ;, P, /, 0, -, =, Enter, Shift</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-    <div style="display:flex;gap:12px;flex-wrap:wrap;">
-        <button class="btn btn-primary btn-lg" onclick="navigateTo('lessons')">📚 Start Lesson 1</button>
-        <button class="btn btn-ghost btn-lg" onclick="openPracticeModal()">⚡ Quick Practice</button>
-    </div>
-</section>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                        <button class="btn btn-primary btn-lg" onclick="navigateTo('lessons')">📚 Start Lesson
+                            1</button>
+                        <button class="btn btn-ghost btn-lg" onclick="openPracticeModal()">⚡ Quick Practice</button>
+                    </div>
+                </section>
 
 
-<!-- ════════════════════════════════════
+                <!-- ════════════════════════════════════
      VIEW: SETTINGS
 ════════════════════════════════════ -->
                 <section id="view-settings" class="view-section">
