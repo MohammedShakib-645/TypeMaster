@@ -849,8 +849,7 @@
 
     <!-- Post-load: update sidebar XP bar and hide loading screen -->
     <script>
-        window.addEventListener('load', () => {
-            // Update sidebar after modules load
+        function hideLoader() {
             try {
                 const p = ProgressManager.getProfile();
                 const lvlData = ProgressManager.getLevelProgress(p);
@@ -861,12 +860,20 @@
                 document.getElementById('topbar-streak').textContent = daily.currentStreak;
             } catch (e) { }
 
-            // Fade out loading screen
-            setTimeout(() => {
-                const ls = document.getElementById('loading-screen');
-                if (ls) { ls.classList.add('fade-out'); setTimeout(() => ls.remove(), 600); }
-            }, 1600);
-        });
+            const ls = document.getElementById('loading-screen');
+            if (ls) {
+                ls.classList.add('fade-out');
+                setTimeout(() => ls.remove(), 400);
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => setTimeout(hideLoader, 300));
+        } else {
+            setTimeout(hideLoader, 300);
+        }
+        // Fallback
+        setTimeout(hideLoader, 1000);
     </script>
 
 </body>

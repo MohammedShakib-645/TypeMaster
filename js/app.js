@@ -166,7 +166,7 @@ function setDailyQuote() {
 
 function renderWeeklyChart(sessions) {
     const ctx = document.getElementById('weekly-chart');
-    if (!ctx) return;
+    if (!ctx || typeof Chart === 'undefined') return;
 
     const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const today = new Date();
@@ -669,6 +669,7 @@ function getSpeedLabel(wpm) {
 }
 
 function drawResultCharts(metrics) {
+    if (typeof Chart === 'undefined') return;
     // Timeline chart
     const timelineCtx = document.getElementById('result-timeline-chart');
     if (timelineCtx) {
@@ -857,7 +858,7 @@ function formatDuration(seconds) {
 
 function renderHistoryChart(sessions) {
     const ctx = document.getElementById('history-trend-chart');
-    if (!ctx) return;
+    if (!ctx || typeof Chart === 'undefined') return;
 
     const recent = [...sessions].slice(-30);
     if (AppState.charts.history) { AppState.charts.history.destroy(); AppState.charts.history = null; }
