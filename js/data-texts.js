@@ -92,8 +92,23 @@ const CODE_DATA = {
     sql: [
         'SELECT u.name, MAX(s.wpm) AS best_wpm, AVG(s.accuracy) AS avg_acc\nFROM users u\nJOIN sessions s ON u.id = s.user_id\nWHERE s.created_at >= NOW() - INTERVAL 30 DAY\nGROUP BY u.id\nORDER BY best_wpm DESC\nLIMIT 10;',
         'CREATE TABLE typing_sessions (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  user_id UUID NOT NULL,\n  wpm INT NOT NULL,\n  accuracy DECIMAL(5,2) NOT NULL,\n  mode VARCHAR(50),\n  completed_at TIMESTAMPTZ DEFAULT NOW()\n);'
-    ],
-    python_adv: [
-        'from dataclasses import dataclass\nfrom typing import List, Optional\n\n@dataclass\nclass TypingResult:\n    wpm: int\n    accuracy: float\n    mistakes: int\n    time_seconds: float\n    grade: Optional[str] = None\n\n    def __post_init__(self):\n        self.grade = self._calculate_grade()\n\n    def _calculate_grade(self) -> str:\n        if self.accuracy >= 95 and self.wpm >= 70:\n            return "A"\n        elif self.accuracy >= 85:\n            return "B"\n        return "C"'
     ]
+};
+
+const TextData = {
+    getText(category = 'medium') {
+        const cat = TEXT_DATA[category] || TEXT_DATA.medium || TEXT_DATA.easy;
+        if (Array.isArray(cat) && cat.length > 0) {
+            return cat[Math.floor(Math.random() * cat.length)];
+        }
+        return 'The quick brown fox jumps over the lazy dog.';
+    },
+
+    getCode(language = 'javascript') {
+        const lang = CODE_DATA[language] || CODE_DATA.javascript;
+        if (Array.isArray(lang) && lang.length > 0) {
+            return lang[Math.floor(Math.random() * lang.length)];
+        }
+        return 'const greet = (name) => `Hello, ${name}!`;';
+    }
 };
