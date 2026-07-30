@@ -440,13 +440,19 @@ function initArenaFingerHint(text) {
     const hint = document.createElement('div');
     hint.id = 'arena-finger-hint-bar';
     hint.className = 'arena-finger-hint glass-card';
+    hint.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:12px 20px;margin-bottom:14px;background:rgba(15,23,42,0.85);border:1px solid var(--primary);border-radius:14px;';
     hint.innerHTML = `
-        <div class="afh-hand" id="afh-hand">⌨️</div>
-        <div class="afh-info">
-            <div class="afh-finger" id="afh-finger">Ready — Start typing!</div>
-            <div class="afh-keys" id="afh-keys">Finger guide will update as you type</div>
+        <div style="display:flex;align-items:center;gap:14px;">
+            <div class="afh-hand" id="afh-hand" style="font-size:28px;">🖐️</div>
+            <div>
+                <div class="afh-finger" id="afh-finger" style="font-size:15px;font-weight:800;color:var(--primary)">10-Finger Position Guide: Keep fingers resting on Home Row</div>
+                <div class="afh-keys" id="afh-keys" style="font-size:12px;color:var(--text-sub)">Left Hand: Pinky(A) Ring(S) Middle(D) Index(F) &nbsp;|&nbsp; Right Hand: Index(J) Middle(K) Ring(L) Pinky(;) &nbsp;|&nbsp; Thumbs: Space</div>
+            </div>
         </div>
-        <div class="afh-key-badge glass-card" id="afh-key-badge" style="color:var(--text-muted)">?</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:11px;color:var(--text-muted);font-weight:700;">NEXT KEY:</span>
+            <div class="afh-key-badge glass-card" id="afh-key-badge" style="font-size:18px;font-weight:900;padding:6px 14px;border-radius:10px;color:var(--primary);border:1.5px solid var(--primary);">READY</div>
+        </div>
     `;
     displayCard.parentElement.insertBefore(hint, displayCard);
 }
@@ -466,27 +472,25 @@ function updateArenaFingerHint(char) {
 
     if (handEl) handEl.textContent = fingerInfo.emoji;
     if (fingerEl) {
-        fingerEl.textContent = fingerInfo.label;
+        fingerEl.textContent = `${fingerInfo.emoji} Use ${fingerInfo.label.toUpperCase()} to press key "${char === ' ' ? 'SPACE' : char.toUpperCase()}"`;
         fingerEl.style.color = fingerInfo.color;
     }
     if (keysEl) {
-        const keys = Object.entries(KEY_FINGER_MAP).filter(([k, f]) => f === fingerKey).map(([k]) => k === ' ' ? 'Space' : k.toUpperCase()).slice(0, 8).join(' ');
-        keysEl.textContent = 'Keys: ' + keys;
+        const fingerHand = fingerInfo.hand === 'left' ? 'LEFT HAND' : 'RIGHT HAND';
+        keysEl.textContent = `${fingerHand} — Keep other 9 fingers resting on Home Row (A S D F | J K L ;)`;
     }
     if (badgeEl) {
-        badgeEl.textContent = char === ' ' ? '⎵' : char.toUpperCase();
+        badgeEl.textContent = char === ' ' ? 'SPACE' : char.toUpperCase();
         badgeEl.style.color = fingerInfo.color;
         badgeEl.style.background = fingerInfo.color + '22';
-        badgeEl.style.border = `1px solid ${fingerInfo.color}44`;
+        badgeEl.style.border = `1.5px solid ${fingerInfo.color}`;
     }
 
-    // Also update keyboard highlight
     if (AppState.keyboard && AppState.keyboard.highlightKey) {
         AppState.keyboard.highlightKey(char);
     }
 
-    // Also update finger guide page if open
-    if (FingerGuideInstance) {
+    if (typeof FingerGuideInstance !== 'undefined' && FingerGuideInstance) {
         FingerGuideInstance.highlightForChar(char);
     }
 }
