@@ -171,47 +171,7 @@ class VirtualKeyboard {
 
     drawHandOutlines() {
         const group = document.getElementById('vkb-hands-outline-group');
-        if (!group) return;
-
-        const fKey = this.keyEls['KeyF'];
-        const jKey = this.keyEls['KeyJ'];
-        if (!fKey || !jKey) return;
-
-        const wrap = document.getElementById('vkb-wrap-main');
-        if (!wrap) return;
-        const wrapRect = wrap.getBoundingClientRect();
-
-        const fRect = fKey.getBoundingClientRect();
-        const jRect = jKey.getBoundingClientRect();
-
-        const leftX = fRect.left - wrapRect.left - 40;
-        const leftY = fRect.top - wrapRect.top + 20;
-
-        const rightX = jRect.left - wrapRect.left - 20;
-        const rightY = jRect.top - wrapRect.top + 20;
-
-        group.innerHTML = `
-            <!-- Left Hand High-Contrast Outline & Finger Labels -->
-            <g transform="translate(${leftX}, ${leftY})">
-                <path d="M -60 120 C -60 70 -50 20 -40 -10 C -38 -15 -32 -15 -30 -10 C -25 15 -25 50 -25 70 C -20 10 -15 -25 -10 -35 C -8 -40 -2 -40 0 -35 C 5 5 5 45 5 65 C 10 5 15 -20 20 -30 C 22 -35 28 -35 30 -30 C 35 10 35 40 35 60 C 45 25 55 10 65 25 C 70 32 65 45 55 60 C 45 75 35 90 20 120"
-                      fill="rgba(59, 130, 246, 0.1)" stroke="#3B82F6" stroke-width="2.5" stroke-linecap="round" filter="url(#glow-filter)"/>
-                <text x="-40" y="-20" fill="#EF4444" font-size="10" font-weight="bold">Pinky (A)</text>
-                <text x="-15" y="-45" fill="#F59E0B" font-size="10" font-weight="bold">Ring (S)</text>
-                <text x="0" y="-45" fill="#22C55E" font-size="10" font-weight="bold">Middle (D)</text>
-                <text x="25" y="-38" fill="#3B82F6" font-size="10" font-weight="bold">Index (F)</text>
-                <text x="65" y="15" fill="#94A3B8" font-size="10" font-weight="bold">Thumb</text>
-            </g>
-            <!-- Right Hand High-Contrast Outline & Finger Labels -->
-            <g transform="translate(${rightX}, ${rightY})">
-                <path d="M -20 120 C -35 90 -45 75 -55 60 C -65 45 -70 32 -65 25 C -55 10 -45 25 -35 60 C -35 40 -35 10 -30 -30 C -28 -35 -22 -35 -20 -30 C -15 -20 -10 5 -5 65 C -5 45 -5 5 0 -35 C 2 -40 8 -40 10 -35 C 15 -25 20 10 25 70 C 25 50 25 15 30 -10 C 32 -15 38 -15 40 -10 C 50 20 60 70 60 120"
-                      fill="rgba(139, 92, 246, 0.1)" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" filter="url(#glow-filter)"/>
-                <text x="-65" y="15" fill="#94A3B8" font-size="10" font-weight="bold">Thumb</text>
-                <text x="-40" y="-38" fill="#8B5CF6" font-size="10" font-weight="bold">Index (J)</text>
-                <text x="-15" y="-45" fill="#EC4899" font-size="10" font-weight="bold">Middle (K)</text>
-                <text x="10" y="-45" fill="#F59E0B" font-size="10" font-weight="bold">Ring (L)</text>
-                <text x="35" y="-20" fill="#EF4444" font-size="10" font-weight="bold">Pinky (;)</text>
-            </g>
-        `;
+        if (group) group.innerHTML = '';
     }
 
     drawDirectionPath(fingerCode, targetCode, color) {
