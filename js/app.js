@@ -1618,6 +1618,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const triggerPwaBtn = $('btn-trigger-pwa-install');
     if (triggerPwaBtn) {
         triggerPwaBtn.addEventListener('click', async () => {
+            // 1. Try browser native PWA install prompt if active
             if (AppState.deferredInstall) {
                 try {
                     AppState.deferredInstall.prompt();
@@ -1626,7 +1627,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (outcome === 'accepted') {
                         const modal = $('app-download-modal');
                         if (modal) modal.classList.remove('open');
-                        showToast('🎉', 'App Installed!', 'TypeMaster has been successfully installed on your device.');
+                        showToast('🎉', 'App Installed!', 'TypeMaster has been installed on your device.');
                         return;
                     }
                 } catch (e) {
@@ -1634,31 +1635,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Direct Download Launcher File
+            // 2. Direct Application File Download
             try {
                 const appFileContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TypeMaster App Launcher</title>
+    <title>TypeMaster Standalone Web Application</title>
     <style>
         body { font-family: system-ui, -apple-system, sans-serif; background: #0F172A; color: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
-        .card { background: rgba(30,41,59,0.8); border: 1px solid rgba(99,102,241,0.3); border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 400px; }
-        .btn { display: inline-block; background: linear-gradient(135deg, #6366F1, #8B5CF6); color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; margin-top: 16px; }
+        .card { background: rgba(30,41,59,0.9); border: 1px solid rgba(99,102,241,0.4); border-radius: 24px; padding: 44px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); max-width: 440px; }
+        .icon { font-size: 56px; margin-bottom: 12px; }
+        h1 { font-size: 24px; margin-bottom: 8px; color: #fff; }
+        p { color: #94A3B8; font-size: 14px; margin-bottom: 24px; }
+        .btn { display: inline-block; background: linear-gradient(135deg, #6366F1, #8B5CF6); color: #fff; text-decoration: none; padding: 14px 28px; border-radius: 14px; font-weight: 800; font-size: 15px; box-shadow: 0 4px 20px rgba(99,102,241,0.4); }
     </style>
     <script>
         setTimeout(() => {
             window.location.href = "https://mohammedshakib-645.github.io/TypeMaster/";
-        }, 800);
+        }, 600);
     </script>
 </head>
 <body>
     <div class="card">
-        <div style="font-size:48px;">⚡</div>
-        <h2>Opening TypeMaster App...</h2>
-        <p style="color:#94A3B8;font-size:14px;">Launching full application experience.</p>
-        <a href="https://mohammedshakib-645.github.io/TypeMaster/" class="btn">Launch TypeMaster</a>
+        <div class="icon">⚡</div>
+        <h1>TypeMaster Application</h1>
+        <p>Launching your touch typing practice session...</p>
+        <a href="https://mohammedshakib-645.github.io/TypeMaster/" class="btn">Launch Application</a>
     </div>
 </body>
 </html>`;
@@ -1666,29 +1670,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const downloadUrl = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = downloadUrl;
-                a.download = 'TypeMaster-App.html';
+                a.download = 'TypeMaster-Application.html';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(downloadUrl);
 
-                showToast('📥', 'App Download Started!', 'TypeMaster-App.html downloaded. Open it to launch the app anytime!');
+                showToast('📥', 'App Download Started!', 'TypeMaster-Application.html saved to your Downloads folder!');
             } catch (err) {
+                console.error('Download trigger error:', err);
                 showToast('📱', 'Installation Steps', 'Follow the device instructions below. Tap browser menu (⋮) -> "Install App".');
-            }
-
-            const downloadModal = $('app-download-modal');
-            if (downloadModal) {
-                const cards = downloadModal.querySelectorAll('div[style*="background:rgba(255,255,255,0.04)"]');
-                cards.forEach(el => {
-                    el.style.transition = 'all 0.3s ease';
-                    el.style.borderColor = '#6366F1';
-                    el.style.boxShadow = '0 0 15px rgba(99, 102, 241, 0.4)';
-                    setTimeout(() => {
-                        el.style.borderColor = 'rgba(255,255,255,0.08)';
-                        el.style.boxShadow = 'none';
-                    }, 2500);
-                });
             }
         });
     }
