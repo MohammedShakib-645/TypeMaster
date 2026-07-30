@@ -72,6 +72,7 @@ function navigateTo(view) {
     if (view === 'stats')   refreshStats();
     if (view === 'achieve') renderAchievements();
     if (view === 'finger')  initFingerGuidePage();
+    if (view === 'certificates') renderCertificatesPage();
     if (view === 'settings')initSettings();
 }
 
@@ -999,6 +1000,127 @@ function renderFingerKeyReference() {
 }
 
 // ═══════════════════════════════════════════════════════════
+// MY CERTIFICATES & VERIFICATION PAGE
+// ═══════════════════════════════════════════════════════════
+function renderCertificatesPage() {
+    const container = $('my-certificates-grid');
+    if (!container) return;
+
+    if (typeof CertificateEngine === 'undefined') {
+        container.innerHTML = '<div style="color:var(--text-muted)">Certificates module loading...</div>';
+        return;
+    }
+
+    const earnedList = CertificateEngine.getEarnedCertificates();
+    const earnedMap = new Map(earnedList.map(c => [c.levelId, c]));
+    const completedLessons = ProgressManager.getCompletedLessons();
+    const sessions = ProgressManager.getSessions();
+    const bestWpm = sessions.length ? Math.max(...sessions.map(s => s.wpm || 0)) : 0;
+    const avgAcc = sessions.length ? Math.round(sessions.reduce((a, s) => a + (s.accuracy || 0), 0) / sessions.length) : 0;
+    const s = AppState.settings;
+    const userName = s.displayName || 'TypeMaster Student';
+
+    container.innerHTML = CERTIFICATE_LEVELS.map(level => {
+        const earned = earnedMap.get(level.id);
+        const isEligible = completedLessons.size >= level.milestoneLesson && bestWpm >= level.requiredWpm && avgAcc >= level.requiredAcc;
+
+        return `
+            <div class="glass-card" style="padding:24px;border-top:4px solid ${level.color};display:flex;flex-direction:column;gap:12px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div style="font-size:32px;">${level.badge}</div>
+                    ${earned
+                        ? `<span class="badge badge-success">✅ Issued ${earned.id}</span>`
+                        : isEligible
+                            ? `<span class="badge badge-warn">✨ Eligible to Claim</span>`
+                            : `<span class="badge badge-error">🔒 Milestone Locked</span>`}
+                </div>
+                <div>
+                    <h3 style="font-size:16px;font-weight:800;margin-bottom:4px;">${level.name}</h3>
+                    <div style="font-size:12px;color:var(--text-sub);">Milestone: Lesson ${level.milestoneLesson} · Min ${level.requiredWpm} WPM · ${level.requiredAcc}% Acc</div>
+                </div>
+                ${earned ? `
+                    <div style="font-size:12px;color:var(--text-muted);background:rgba(0,0,0,0.2);padding:10px;border-radius:8px;">
+                        <div>ID: <strong>${earned.id}</strong></div>
+                        <div>Date: ${earned.issueDate}</div>
+                        <div>Score: ${earned.finalWpm} WPM · ${earned.finalAccuracy}% Accuracy</div>
+                    </div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;">
+                        <button class="btn btn-primary btn-sm" onclick="claimCertificate('${level.id}')">🖨️ View & Print</button>
+                        <button class="btn btn-ghost btn-sm" onclick="shareCertificate('${earned.id}')">📋 Share</button>
+                    </div>
+                ` : `
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:auto;">
+                        ${isEligible
+                            ? `<button class="btn btn-claim-cert btn-sm" style="width:100%" onclick="claimCertificate('${level.id}')">🎓 Issue & View Certificate</button>`
+                            : `Complete Lesson ${level.milestoneLesson} with ${level.requiredWpm}+ WPM to unlock.`}
+                    </div>
+                `}
+            </div>
+        `;
+    }).join('');
+
+    const btnVerify = $('btn-verify-cert');
+    if (btnVerify) {
+        btnVerify.onclick = handleVerifyCertificate;
+    }
+}
+
+function handleVerifyCertificate() {
+    const input = $('cert-verify-input');
+    const resultBox = $('cert-verify-result');
+    if (!input || !resultBox) return;
+
+    const certId = input.value.trim();
+    if (!certId) {
+        showToast('⚠️', 'Input Error', 'Please enter a Certificate ID.');
+        return;
+    }
+
+    const verification = CertificateEngine.verify(certId);
+    resultBox.style.display = 'block';
+
+    if (verification.valid) {
+        const c = verification.cert;
+        resultBox.className = 'glass-card';
+        resultBox.style.border = '1px solid var(--success)';
+        resultBox.style.background = 'rgba(34,197,94,0.1)';
+        resultBox.innerHTML = `
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+                <div style="font-size:32px;">🎓</div>
+                <div>
+                    <div style="font-size:14px;font-weight:800;color:var(--success)">✅ ${c.verificationStatus}</div>
+                    <div style="font-size:16px;font-weight:900;">${c.studentName} — ${c.levelName}</div>
+                </div>
+            </div>
+            <div style="font-size:13px;color:var(--text-sub);line-height:1.7;">
+                <div>Certificate ID: <strong>${c.id}</strong> &nbsp;·&nbsp; Issued: ${c.issueDate}</div>
+                <div>Performance: <strong>${c.finalWpm} WPM</strong> &nbsp;·&nbsp; Accuracy: <strong>${c.finalAccuracy}%</strong> &nbsp;·&nbsp; Lessons: <strong>${c.lessonsCompleted}</strong></div>
+                <div>Issuer: <strong>${c.provider?.providerName || 'Mohammed Shakib'}</strong> (${c.provider?.providerTitle || 'Founder & Director'}, ${c.provider?.organization || 'TypeMaster Academy'})</div>
+            </div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:12px;" onclick="claimCertificate('${c.levelId || 'master'}')">🖨️ Render Certificate</button>
+        `;
+    } else {
+        resultBox.className = 'glass-card';
+        resultBox.style.border = '1px solid var(--error)';
+        resultBox.style.background = 'rgba(239,68,68,0.1)';
+        resultBox.innerHTML = `
+            <div style="font-size:14px;font-weight:800;color:var(--error);margin-bottom:4px;">❌ Invalid Certificate ID</div>
+            <div style="font-size:12px;color:var(--text-sub);">No official TypeMaster certificate was found matching "${escapeHTML(certId)}". Please check the Certificate ID and try again.</div>
+        `;
+    }
+}
+
+function shareCertificate(certId) {
+    const url = `${location.origin}${location.pathname}?verify=${certId}`;
+    const text = `Check out my official TypeMaster Certificate (${certId})! 🎓`;
+    if (navigator.share) {
+        navigator.share({ title: 'TypeMaster Certificate', text, url });
+    } else {
+        navigator.clipboard.writeText(`${text} ${url}`).then(() => showToast('📋', 'Link Copied!', 'Certificate verification link copied to clipboard.'));
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
 // SETTINGS
 // ═══════════════════════════════════════════════════════════
 function initSettings() {
@@ -1020,6 +1142,13 @@ function initSettings() {
     setEl('set-sound', s.sound !== false);
     setEl('set-volume', s.volume ?? 0.65);
     setEl('set-click-type', s.clickType || 'mechanical');
+
+    if (typeof CertificateEngine !== 'undefined') {
+        const prov = CertificateEngine.getProviderSettings();
+        setEl('set-provider-name', prov.providerName || '');
+        setEl('set-provider-title', prov.providerTitle || '');
+        setEl('set-organization', prov.organization || '');
+    }
 
     const fsVal = $('set-font-size-val');
     if (fsVal) fsVal.textContent = (s.fontSize || 22) + 'px';
@@ -1048,6 +1177,14 @@ function saveSettingsFromForm() {
         volume: parseFloat(getVal('set-volume')) || 0.65,
         clickType: getVal('set-click-type')
     };
+
+    if (typeof CertificateEngine !== 'undefined') {
+        CertificateEngine.saveProviderSettings({
+            providerName: getVal('set-provider-name'),
+            providerTitle: getVal('set-provider-title'),
+            organization: getVal('set-organization')
+        });
+    }
 
     AppState.settings = { ...AppState.settings, ...s };
     saveSettings(AppState.settings);

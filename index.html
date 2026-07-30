@@ -81,6 +81,9 @@
             <a class="nav-link" data-view="finger" href="#">
                 <span class="nav-icon">🖐️</span> Finger Guide
             </a>
+            <a class="nav-link" data-view="certificates" href="#">
+                <span class="nav-icon">📜</span> Certificates
+            </a>
             <a class="nav-link" data-view="settings" href="#">
                 <span class="nav-icon">⚙️</span> Settings
             </a>
@@ -580,6 +583,34 @@
 
 
                 <!-- ════════════════════════════════════
+     VIEW: CERTIFICATES
+════════════════════════════════════ -->
+                <section id="view-certificates" class="view-section">
+                    <div class="page-header">
+                        <h2>📜 Certification & Graduation Center</h2>
+                        <p>View your official TypeMaster certificates, download PDFs, and verify certificate IDs.</p>
+                    </div>
+
+                    <!-- Certificate Verification Search Box -->
+                    <div class="glass-card" style="padding:24px;margin-bottom:24px;">
+                        <div class="stats-section-title" style="margin-bottom:12px;">🔍 Verify Certificate by ID</div>
+                        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+                            <input type="text" id="cert-verify-input" placeholder="Enter Certificate ID (e.g. TM-000001)"
+                                   style="flex:1;min-width:260px;padding:12px 16px;border-radius:12px;background:rgba(0,0,0,0.3);border:1px solid var(--card-border);color:var(--text);font-family:monospace;font-size:15px;text-transform:uppercase;">
+                            <button class="btn btn-primary" id="btn-verify-cert">🔍 Verify Certificate</button>
+                        </div>
+                        <div id="cert-verify-result" style="margin-top:16px;display:none;"></div>
+                    </div>
+
+                    <!-- All Milestone Certificates Grid -->
+                    <div class="glass-card" style="padding:24px;">
+                        <div class="stats-section-title" style="margin-bottom:16px;">🎓 Official Milestone Certificates</div>
+                        <div class="certificates-grid" id="my-certificates-grid"></div>
+                    </div>
+                </section>
+
+
+                <!-- ════════════════════════════════════
      VIEW: SETTINGS
 ════════════════════════════════════ -->
                 <section id="view-settings" class="view-section">
@@ -599,6 +630,38 @@
                                 </div>
                                 <div class="setting-control">
                                     <input type="text" id="set-display-name" class="form-input" placeholder="Your name">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Certificate Provider Settings -->
+                        <div class="settings-group">
+                            <h3>📜 Certificate Provider Settings</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Provider Name</div>
+                                    <div class="setting-sub">Appears on issued certificates</div>
+                                </div>
+                                <div class="setting-control">
+                                    <input type="text" id="set-provider-name" class="form-input" placeholder="Mohammed Shakib">
+                                </div>
+                            </div>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Provider Title</div>
+                                    <div class="setting-sub">Official title on signatures</div>
+                                </div>
+                                <div class="setting-control">
+                                    <input type="text" id="set-provider-title" class="form-input" placeholder="Founder & Director">
+                                </div>
+                            </div>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Organization Name</div>
+                                    <div class="setting-sub">Issuer organization</div>
+                                </div>
+                                <div class="setting-control">
+                                    <input type="text" id="set-organization" class="form-input" placeholder="TypeMaster Academy">
                                 </div>
                             </div>
                         </div>
