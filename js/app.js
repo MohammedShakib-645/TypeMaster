@@ -1499,9 +1499,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, { once: true });
 
-    // Service Worker registration
+    // Unregister legacy service worker caches to force live updates
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+        navigator.serviceWorker.getRegistrations().then(regs => {
+            regs.forEach(r => r.unregister());
+        });
+        if (window.caches) {
+            caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+        }
     }
 
     // Student Auth Modal Handlers
