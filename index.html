@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-caret="line">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeMaster – Learn Touch Typing | Free Lessons & Speed Tests</title>
+    <meta name="description"
+        content="TypeMaster: The complete free typing learning platform. Structured lessons from home row to programming code, real-time feedback, XP levels, achievements, and offline PWA.">
+    <meta name="theme-color" content="#0F172A">
+    <meta property="og:title" content="TypeMaster – Modern Typing Learning Platform">
+    <meta property="og:description"
+        content="Master touch typing with structured lessons, real-time feedback, XP system, and daily challenges.">
+
+    <!-- Favicon & Manifest -->
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+    <link rel="manifest" href="./manifest.json">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="./css/themes.css">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/components.css">
+    <link rel="stylesheet" href="./css/finger-guide.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+</head>
+
+<body>
+
+    <!-- ════════════════════════════════════════
+     LOADING SCREEN
+════════════════════════════════════════ -->
+    <div id="loading-screen">
+        <div class="loader-logo">⚡</div>
+        <div style="font-size:24px;font-weight:900;letter-spacing:-0.5px;">TypeMaster</div>
+        <div class="loader-bar-track">
+            <div class="loader-bar-fill"></div>
+        </div>
+        <div style="font-size:13px;color:#94A3B8;">Loading your learning experience...</div>
+    </div>
+
+
+    <!-- ════════════════════════════════════════
+     MAIN APP LAYOUT
+════════════════════════════════════════ -->
+    <div class="app-layout">
+
+        <!-- ── SIDEBAR NAVIGATION ── -->
+        <aside class="sidebar">
+            <a href="#" class="sidebar-brand" data-view="home">
+                <div class="brand-icon-wrap">⚡</div>
+                <div class="brand-text">
+                    <h1>TypeMaster</h1>
+                    <div class="brand-tagline">Type Smarter.</div>
+                </div>
+            </a>
+
+            <a class="nav-link active" data-view="home" href="#">
+                <span class="nav-icon">🏠</span> Dashboard
+            </a>
+            <a class="nav-link" data-view="lessons" href="#">
+                <span class="nav-icon">📚</span> Lessons
+            </a>
+            <a class="nav-link" data-view="arena" href="#" id="nav-arena">
+                <span class="nav-icon">⌨️</span> Typing Arena
+            </a>
+            <a class="nav-link" data-view="stats" href="#">
+                <span class="nav-icon">📊</span> Statistics
+            </a>
+            <a class="nav-link" data-view="achieve" href="#">
+                <span class="nav-icon">🏆</span> Achievements
+            </a>
+            <a class="nav-link" data-view="finger" href="#">
+                <span class="nav-icon">🖐️</span> Finger Guide
+            </a>
+            <a class="nav-link" data-view="settings" href="#">
+                <span class="nav-icon">⚙️</span> Settings
+            </a>
+
+            <!-- XP FOOTER -->
+            <div class="sidebar-footer">
+                <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">
+                    Level <span id="sidebar-level">1</span>
+                </div>
+                <div class="xp-bar-track">
+                    <div class="xp-bar-fill" id="sidebar-xp-bar" style="width:0%"></div>
+                </div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:5px;" id="sidebar-xp-label">0 / 100 XP
+                </div>
+            </div>
+        </aside>
+
+
+        <!-- ── MAIN CONTENT AREA ── -->
+        <div class="main-content">
+
+            <!-- TOP BAR -->
+            <div class="top-bar">
+                <div style="font-size:14px;color:var(--text-sub)" id="top-bar-title">Dashboard</div>
+                <div style="display:flex;gap:12px;align-items:center;">
+                    <div class="top-bar-streak" title="Daily Practice Streak">
+                        🔥 <span id="topbar-streak">0</span> day streak
+                    </div>
+                    <button class="install-pwa-btn" id="btn-install-pwa" title="Install TypeMaster as App">
+                        📲 Install App
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="openPracticeModal()">
+                        ▶ Start Typing
+                    </button>
+                </div>
+            </div>
+
+            <!-- PAGE CONTENT -->
+            <div class="page-content">
+
+                <!-- ════════════════════════════════════
+     VIEW: HOME / DASHBOARD
+════════════════════════════════════ -->
+                <section id="view-home" class="view-section active">
+                    <div class="page-header">
+                        <h2>Welcome back! 👋</h2>
+                        <p>Here's your typing progress at a glance.</p>
+                    </div>
+
+                    <!-- Hero Row: Profile + Stats -->
+                    <div class="home-hero">
+                        <div class="hero-profile-card glass-card">
+                            <div class="avatar-circle">⚡</div>
+                            <div class="hero-profile-info" style="flex:1">
+                                <h2 id="home-username">TypeMaster User</h2>
+                                <div class="level-tag">⭐ <span id="home-level">Level 1</span></div>
+                                <div class="xp-section">
+                                    <div class="xp-label" id="home-xp-label">0 / 100 XP to Level 2</div>
+                                    <div class="xp-track">
+                                        <div class="xp-fill" id="home-xp-bar" style="width:0%"></div>
+                                    </div>
+                                </div>
+                                <div style="margin-top:14px;font-size:13px;color:var(--text-sub)">
+                                    Total XP: <strong id="home-xp">0</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="hero-stats-grid">
+                            <div class="mini-stat-card glass-card">
+                                <div class="lbl">Best WPM</div>
+                                <div class="val" style="color:var(--primary)" id="home-best-wpm">0</div>
+                            </div>
+                            <div class="mini-stat-card glass-card">
+                                <div class="lbl">Accuracy</div>
+                                <div class="val" style="color:var(--success)" id="home-accuracy">0%</div>
+                            </div>
+                            <div class="mini-stat-card glass-card">
+                                <div class="lbl">Tests Done</div>
+                                <div class="val" id="home-tests">0</div>
+                            </div>
+                            <div class="mini-stat-card glass-card">
+                                <div class="lbl">Lessons</div>
+                                <div class="val" id="home-lessons">0/33</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cards Row -->
+                    <div class="home-cards-row">
+                        <div class="next-lesson-card glass-card">
+                            <div class="next-lesson-icon">📚</div>
+                            <div style="flex:1">
+                                <h3 id="home-next-lesson-title">Lesson 1: Meet F and J</h3>
+                                <p id="home-next-lesson-sub">Home Row · 10 WPM Target</p>
+                                <button class="btn btn-primary" id="btn-continue-learning">▶ Continue Learning</button>
+                            </div>
+                        </div>
+
+                        <div class="streak-card glass-card">
+                            <div class="streak-flame">🔥</div>
+                            <div class="streak-number" id="home-streak">0</div>
+                            <div class="streak-label">Day Streak</div>
+                        </div>
+                    </div>
+
+                    <!-- Curriculum Progress Card -->
+                    <div class="curriculum-progress-card glass-card">
+                        <div class="curriculum-overall">
+                            <div class="curriculum-pct" id="home-curriculum-pct">0%</div>
+                            <div style="flex:1">
+                                <div style="font-size:13px;font-weight:700;margin-bottom:6px">Overall Curriculum
+                                    Progress</div>
+                                <div class="curriculum-track">
+                                    <div class="curriculum-fill" id="home-curriculum-fill" style="width:0%"></div>
+                                </div>
+                            </div>
+                            <button class="btn btn-ghost btn-sm" onclick="navigateTo('lessons')">📚 View All</button>
+                        </div>
+                        <div style="font-size:12px;color:var(--text-muted)" id="home-curriculum-sub">Complete all 300
+                            lessons to earn the TypeMaster Master Certificate</div>
+                    </div>
+
+                    <!-- Weekly Activity Chart -->
+                    <div class="glass-card" style="padding:24px;margin-bottom:20px;">
+                        <div class="stats-section-title">📈 Weekly WPM Activity</div>
+                        <div class="chart-wrap-sm"><canvas id="weekly-chart"></canvas></div>
+                    </div>
+
+                    <!-- Daily Quote -->
+                    <div class="quote-card glass-card">
+                        <div style="font-size:14px;font-weight:700;color:var(--primary);margin-bottom:8px">💡 Daily
+                            Motivation</div>
+                        <p id="daily-quote">Loading quote...</p>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;">
+                        <button class="btn btn-primary btn-lg" id="btn-start-typing">⚡ Start Typing Test</button>
+                        <button class="btn btn-ghost btn-lg" id="btn-view-lessons">📚 View All Lessons</button>
+                    </div>
+                </section>
+
+
+                <!-- ════════════════════════════════════
+     VIEW: LESSON MAP
+════════════════════════════════════ -->
+                <section id="view-lessons" class="view-section">
+                    <div class="page-header">
+                        <h2>📚 Learning Curriculum</h2>
+                        <p>Complete lessons in order to unlock the full keyboard. Progress is saved automatically.</p>
+                    </div>
+                    <div id="lesson-map-container"></div>
+                </section>
+
+
+                <!-- ════════════════════════════════════
+     VIEW: TYPING ARENA
+════════════════════════════════════ -->
+                <section id="view-arena" class="view-section">
+                    <div class="arena-header">
+                        <div class="arena-title-group">
+                            <h2 id="arena-title">Typing Arena</h2>
+                            <p id="arena-subtitle">Select a lesson or mode to begin</p>
+                        </div>
+                        <div class="arena-controls">
+                            <button class="btn btn-ghost btn-sm" id="btn-pause">⏸ Pause</button>
+                            <button class="btn btn-ghost btn-sm" id="btn-restart">🔄 Restart</button>
+                            <button class="btn btn-ghost btn-sm" onclick="openPracticeModal()">⚡ Change Mode</button>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Info Panel -->
+                    <div id="lesson-info-panel" class="lesson-info-panel glass-card" style="display:none;">
+                        <div style="flex:1">
+                            <div
+                                style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">
+                                Lesson Objective</div>
+                            <p id="lesson-objective" class="objective"></p>
+                        </div>
+                        <div class="lesson-meta-tags">
+                            <span class="badge badge-primary">🎯 <span id="lesson-target-acc"></span></span>
+                            <span class="badge badge-warn">⚡ <span id="lesson-target-wpm"></span></span>
+                            <span class="badge badge-success">✨ <span id="lesson-xp-reward"></span></span>
+                        </div>
+                        <div>
+                            <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Focus Keys</div>
+                            <div class="focus-keys" id="lesson-focus-keys"></div>
+                        </div>
+                    </div>
+
+                    <!-- HUD Stats Bar -->
+                    <div class="hud-strip glass-card">
+                        <div class="hud-metric">
+                            <div class="hud-lbl">WPM</div>
+                            <div class="hud-val" id="hud-wpm" style="color:var(--primary)">0</div>
+                        </div>
+                        <div class="hud-metric">
+                            <div class="hud-lbl">Raw</div>
+                            <div class="hud-val" id="hud-raw">0</div>
+                        </div>
+                        <div class="hud-metric">
+                            <div class="hud-lbl">Accuracy</div>
+                            <div class="hud-val" id="hud-acc" style="color:var(--success)">100%</div>
+                        </div>
+                        <div class="hud-metric">
+                            <div class="hud-lbl">Correct</div>
+                            <div class="hud-val" id="hud-correct" style="color:var(--success);font-size:18px">0</div>
+                        </div>
+                        <div class="hud-metric">
+                            <div class="hud-lbl">Errors</div>
+                            <div class="hud-val" id="hud-errors" style="color:var(--error);font-size:18px">0</div>
+                        </div>
+                        <div class="hud-metric">
+                            <div class="hud-lbl">Time</div>
+                            <div class="hud-val" id="hud-elapsed" style="font-size:18px">0:00</div>
+                        </div>
+                        <div class="hud-metric">
+                            <div class="hud-lbl">Remaining</div>
+                            <div class="hud-val" id="hud-remaining" style="font-size:18px">—</div>
+                        </div>
+                        <div class="hud-progress-track">
+                            <div class="hud-progress-fill" id="hud-progress-bar"></div>
+                        </div>
+                    </div>
+
+                    <!-- Typing Display -->
+                    <div class="typing-display-card glass-card">
+                        <div id="typing-display"></div>
+                        <div class="arena-hint">
+                            <kbd>Tab</kbd> Restart &nbsp; <kbd>Esc</kbd> Close
+                        </div>
+                    </div>
+
+                    <!-- Visual Keyboard -->
+                    <div class="glass-card" style="margin-top:16px;overflow:hidden;">
+                        <div id="vkb-container"></div>
+                    </div>
+                </section>
+
+
+                <!-- ════════════════════════════════════
+     VIEW: STATISTICS
+════════════════════════════════════ -->
+                <section id="view-stats" class="view-section">
+                    <div class="page-header">
+                        <h2>📊 Statistics Dashboard</h2>
+                        <p>Your complete typing performance analytics.</p>
+                    </div>
+
+                    <!-- Overview Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card glass-card">
+                            <div class="label">Best WPM</div>
+                            <div class="value primary" id="stats-best-wpm">0</div>
+                        </div>
+                        <div class="stat-card glass-card">
+                            <div class="label">Average WPM</div>
+                            <div class="value" id="stats-avg-wpm">0</div>
+                        </div>
+                        <div class="stat-card glass-card">
+                            <div class="label">Highest Accuracy</div>
+                            <div class="value success" id="stats-high-acc">0%</div>
+                        </div>
+                        <div class="stat-card glass-card">
+                            <div class="label">Total Tests</div>
+                            <div class="value" id="stats-total-tests">0</div>
+                        </div>
+                        <div class="stat-card glass-card">
+                            <div class="label">Words Typed</div>
+                            <div class="value" id="stats-total-words">0</div>
+                        </div>
+                        <div class="stat-card glass-card">
+                            <div class="label">Characters</div>
+                            <div class="value" id="stats-total-chars">0</div>
+                        </div>
+                        <div class="stat-card glass-card">
+                            <div class="label">Practice Time</div>
+                            <div class="value" id="stats-practice-time">0s</div>
+                        </div>
+                        <div class="stat-card glass-card">
+                            <div class="label">Daily Streak</div>
+                            <div class="value warn" id="stats-streak">0 days</div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="stats-two-col">
+                        <div class="glass-card" style="padding:24px;">
+                            <div class="stats-section-title">WPM & Accuracy Trend (Last 30 Tests)</div>
+                            <div class="chart-wrap"><canvas id="history-trend-chart"></canvas></div>
+                        </div>
+                        <div class="glass-card" style="padding:24px;">
+                            <div class="stats-section-title">Top Missed Keys</div>
+                            <div class="heatmap-grid" id="mistake-heatmap"></div>
+                        </div>
+                    </div>
+
+                    <!-- History Table -->
+                    <div class="glass-card" style="padding:24px;">
+                        <div
+                            style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+                            <div class="stats-section-title" style="margin:0">Recent Tests</div>
+                            <button class="btn btn-ghost btn-sm" id="btn-export-csv">📥 Export CSV</button>
+                        </div>
+                        <div style="overflow-x:auto;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date / Time</th>
+                                        <th>WPM</th>
+                                        <th>Raw WPM</th>
+                                        <th>Accuracy</th>
+                                        <th>Grade</th>
+                                        <th>Mode</th>
+                                        <th>Mistakes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="history-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- ════════════════════════════════════
+     VIEW: ACHIEVEMENTS
+════════════════════════════════════ -->
+                <section id="view-achieve" class="view-section">
+                    <div class="page-header">
+                        <h2>🏆 Achievements</h2>
+                        <p>Unlock badges by practicing consistently and improving your speed.</p>
+                    <div id="achievements-grid" class="achievements-grid"></div>
+                </section>
+
+
+<!-- ════════════════════════════════════
+     VIEW: FINGER GUIDE
+════════════════════════════════════ -->
+<section id="view-finger" class="view-section">
+    <div class="page-header">
+        <h2>🖐️ Finger Placement Guide</h2>
+        <p>Learn exactly which finger types each key. Click any finger or key below to highlight it.</p>
+    </div>
+
+    <!-- Interactive Hands Display -->
+    <div class="glass-card" style="margin-bottom:20px;overflow:hidden;">
+        <div style="padding:20px 24px 0;">
+            <div class="stats-section-title">Interactive Finger Map — Click any finger to see its keys</div>
+        </div>
+        <div id="finger-guide-main"></div>
+    </div>
+
+    <!-- Key Reference Grid -->
+    <div class="glass-card" style="padding:24px;margin-bottom:20px;">
+        <div class="stats-section-title" style="margin-bottom:16px;">Key Assignment by Finger</div>
+        <div class="finger-key-reference" id="finger-key-reference"></div>
+    </div>
+
+    <!-- Home Row Reference -->
+    <div class="glass-card" style="padding:24px;margin-bottom:20px;">
+        <div class="stats-section-title" style="margin-bottom:16px;">🏠 Home Row — Your Starting Position</div>
+        <p style="color:var(--text-sub);font-size:14px;margin-bottom:16px;line-height:1.7;">Always return your fingers to the home row after each keystroke. The <kbd>F</kbd> and <kbd>J</kbd> keys have tactile bumps to help you locate position without looking.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:20px;background:rgba(0,0,0,0.2);border-radius:12px;margin-bottom:16px;">
+            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#EF4444;background:#EF444420;color:#EF4444">A</kbd><div style="font-size:10px;color:#EF4444;margin-top:6px">Left Pinky</div></div>
+            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#F59E0B;background:#F59E0B20;color:#F59E0B">S</kbd><div style="font-size:10px;color:#F59E0B;margin-top:6px">Left Ring</div></div>
+            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#22C55E;background:#22C55E20;color:#22C55E">D</kbd><div style="font-size:10px;color:#22C55E;margin-top:6px">Left Middle</div></div>
+            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#3B82F6;background:#3B82F620;color:#3B82F6">F</kbd><div style="font-size:10px;color:#3B82F6;margin-top:6px">Left Index ●</div></div>
+            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#3B82F6;background:#3B82F610;color:#3B82F6">G</kbd><div style="font-size:10px;color:#3B82F6;margin-top:6px">Left Index</div></div>
+            <div style="width:20px;"></div>
+            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#8B5CF6;background:#8B5CF610;color:#8B5CF6">H</kbd><div style="font-size:10px;color:#8B5CF6;margin-top:6px">Right Index</div></div>
+            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#8B5CF6;background:#8B5CF620;color:#8B5CF6">J</kbd><div style="font-size:10px;color:#8B5CF6;margin-top:6px">Right Index ●</div></div>
+            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#EC4899;background:#EC489920;color:#EC4899">K</kbd><div style="font-size:10px;color:#EC4899;margin-top:6px">Right Middle</div></div>
+            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#F59E0B;background:#F59E0B20;color:#F59E0B">L</kbd><div style="font-size:10px;color:#F59E0B;margin-top:6px">Right Ring</div></div>
+            <div style="text-align:center;"><kbd style="font-size:20px;padding:10px 14px;border-color:#EF4444;background:#EF444420;color:#EF4444">;</kbd><div style="font-size:10px;color:#EF4444;margin-top:6px">Right Pinky</div></div>
+        </div>
+        <div style="text-align:center;">
+            <kbd style="font-size:16px;padding:8px 60px;border-color:#94A3B8;background:rgba(148,163,184,0.1);color:#94A3B8">SPACE BAR — Both Thumbs</kbd>
+        </div>
+    </div>
+
+    <!-- Posture Guide -->
+    <div class="glass-card" style="padding:24px;margin-bottom:20px;">
+        <div class="stats-section-title" style="margin-bottom:16px;">🪑 Proper Typing Posture</div>
+        <div class="posture-grid">
+            <div class="posture-card"><div class="posture-icon">🪑</div><div class="posture-title">Sit Up Straight</div><div class="posture-desc">Back straight and supported. Avoid slouching. Your spine should be aligned and comfortable throughout your session.</div></div>
+            <div class="posture-card"><div class="posture-icon">🦵</div><div class="posture-title">Feet Flat</div><div class="posture-desc">Both feet flat on the floor. Knees at a 90° angle. This prevents lower back strain during extended typing sessions.</div></div>
+            <div class="posture-card"><div class="posture-icon">💪</div><div class="posture-title">Elbows at 90°</div><div class="posture-desc">Elbows bent at ~90 degrees. Upper arms close to body. Shoulders relaxed and not raised up toward your ears.</div></div>
+            <div class="posture-card"><div class="posture-icon">✋</div><div class="posture-title">Level Wrists</div><div class="posture-desc">Wrists level with the keyboard — not bent up or down. Avoid resting wrists on the desk while actively typing keys.</div></div>
+            <div class="posture-card"><div class="posture-icon">👁️</div><div class="posture-title">Eyes on Screen</div><div class="posture-desc">Look at the screen, NOT the keyboard! Screen at eye level, arm's length away. Never look at your hands while typing.</div></div>
+            <div class="posture-card"><div class="posture-icon">⏰</div><div class="posture-title">Take Breaks</div><div class="posture-desc">Every 30 minutes, rest for 5 minutes. Shake wrists, stand up, and look away from screen to prevent repetitive strain injuries.</div></div>
+        </div>
+    </div>
+
+    <!-- Both Hands Diagram Description -->
+    <div class="glass-card" style="padding:24px;margin-bottom:20px;">
+        <div class="stats-section-title" style="margin-bottom:16px;">✋🤚 Hand Position Guide</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;flex-wrap:wrap;">
+            <div>
+                <h3 style="font-size:15px;margin-bottom:12px;color:var(--primary)">LEFT HAND</h3>
+                <div style="font-size:13px;color:var(--text-sub);line-height:2;">
+                    <div>🔴 <strong>Pinky</strong> → A, Q, Z, 1, Shift, Tab, Caps</div>
+                    <div>🟡 <strong>Ring</strong> → S, W, X, 2</div>
+                    <div>🟢 <strong>Middle</strong> → D, E, C, 3</div>
+                    <div>🔵 <strong>Index</strong> → F, G, R, T, V, B, 4, 5</div>
+                    <div>⚪ <strong>Thumb</strong> → Spacebar</div>
+                </div>
+            </div>
+            <div>
+                <h3 style="font-size:15px;margin-bottom:12px;color:var(--purple, #8B5CF6)">RIGHT HAND</h3>
+                <div style="font-size:13px;color:var(--text-sub);line-height:2;">
+                    <div>⚪ <strong>Thumb</strong> → Spacebar</div>
+                    <div>🟣 <strong>Index</strong> → J, H, U, Y, M, N, 6, 7</div>
+                    <div>🩷 <strong>Middle</strong> → K, I, ,, 8</div>
+                    <div>🟡 <strong>Ring</strong> → L, O, ., 9</div>
+                    <div>🔴 <strong>Pinky</strong> → ;, P, /, 0, -, =, Enter, Shift</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn btn-primary btn-lg" onclick="navigateTo('lessons')">📚 Start Lesson 1</button>
+        <button class="btn btn-ghost btn-lg" onclick="openPracticeModal()">⚡ Quick Practice</button>
+    </div>
+</section>
+
+
+<!-- ════════════════════════════════════
+     VIEW: SETTINGS
+════════════════════════════════════ -->
+                <section id="view-settings" class="view-section">
+                    <div class="page-header">
+                        <h2>⚙️ Settings</h2>
+                        <p>Customize your TypeMaster experience.</p>
+                    </div>
+
+                    <!-- Profile -->
+                    <div class="glass-card" style="padding:28px;margin-bottom:20px;">
+                        <div class="settings-group">
+                            <h3>👤 Profile</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Display Name</div>
+                                    <div class="setting-sub">Shown on your dashboard</div>
+                                </div>
+                                <div class="setting-control">
+                                    <input type="text" id="set-display-name" class="form-input" placeholder="Your name">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Appearance -->
+                        <div class="settings-group">
+                            <h3>🎨 Appearance</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Color Theme</div>
+                                    <div class="setting-sub">Choose your visual style</div>
+                                </div>
+                                <div class="setting-control">
+                                    <select id="set-theme" class="form-select">
+                                        <option value="dark">⚫ Dark Space</option>
+                                        <option value="light">☀️ Light Mode</option>
+                                        <option value="midnight">🌙 Midnight</option>
+                                        <option value="cyber">🔵 Cyber Blue</option>
+                                        <option value="hacker">🟢 Hacker Green</option>
+                                        <option value="purple">🟣 Purple Neon</option>
+                                        <option value="ocean">🌊 Ocean</option>
+                                        <option value="sunset">🌅 Sunset</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Typing -->
+                        <div class="settings-group">
+                            <h3>⌨️ Typing Display</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Font Family</div>
+                                </div>
+                                <div class="setting-control">
+                                    <select id="set-font-family" class="form-select">
+                                        <option value="Fira Code">Fira Code</option>
+                                        <option value="JetBrains Mono">JetBrains Mono</option>
+                                        <option value="Inter">Inter</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Font Size</div>
+                                    <div class="setting-sub">Typing text size: <span id="set-font-size-val">22px</span>
+                                    </div>
+                                </div>
+                                <div class="setting-control">
+                                    <input type="range" id="set-font-size" min="16" max="32" value="22">
+                                </div>
+                            </div>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Caret Style</div>
+                                </div>
+                                <div class="setting-control">
+                                    <select id="set-caret" class="form-select">
+                                        <option value="line">Line (|)</option>
+                                        <option value="block">Block (█)</option>
+                                        <option value="underline">Underline (_)</option>
+                                        <option value="hidden">Hidden</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Show Visual Keyboard</div>
+                                    <div class="setting-sub">Display finger placement guide</div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="set-show-keyboard" checked>
+                                    <span class="toggle-track"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Sound -->
+                        <div class="settings-group">
+                            <h3>🔊 Sound</h3>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Keyboard Sound</div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="set-sound" checked>
+                                    <span class="toggle-track"></span>
+                                </label>
+                            </div>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Volume</div>
+                                </div>
+                                <div class="setting-control">
+                                    <input type="range" id="set-volume" min="0" max="1" step="0.05" value="0.65">
+                                </div>
+                            </div>
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Sound Style</div>
+                                </div>
+                                <div class="setting-control">
+                                    <select id="set-click-type" class="form-select">
+                                        <option value="mechanical">Mechanical (Thock)</option>
+                                        <option value="soft">Soft</option>
+                                        <option value="typewriter">Typewriter</option>
+                                        <option value="digital">Digital</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Data -->
+                        <div class="settings-group">
+                            <h3>💾 Data & Backup</h3>
+                            <div class="setting-row" style="flex-wrap:wrap;gap:12px;">
+                                <button class="btn btn-ghost" id="btn-export-backup">📤 Export JSON Backup</button>
+                                <label class="btn btn-ghost" style="cursor:pointer;">
+                                    📥 Import Backup
+                                    <input type="file" id="btn-import-backup" accept=".json" style="display:none">
+                                </label>
+                                <button class="btn btn-danger" id="btn-clear-data">🗑️ Reset All Data</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div><!-- /.page-content -->
+        </div><!-- /.main-content -->
+    </div><!-- /.app-layout -->
+
+
+    <!-- ════════════════════════════════════
+     MODAL: TEST RESULT
+════════════════════════════════════ -->
+    <div id="result-modal" class="modal">
+        <div class="modal-box glass-card">
+            <div class="modal-header">
+                <h2>🎉 Test Complete!</h2>
+                <button class="modal-close-btn">✕</button>
+            </div>
+
+            <div id="res-pb-badge" class="pb-badge" style="display:none">
+                🏆 New Personal Best!
+            </div>
+            <div id="res-pass-status" class="res-pass-status" style="display:none"></div>
+
+            <div class="result-big-wpm" id="res-wpm">0</div>
+            <div style="text-align:center;margin-top:-12px;font-size:14px;color:var(--text-sub)">
+                Words Per Minute &nbsp;·&nbsp; <span id="res-level-name">Beginner</span>
+                &nbsp;&nbsp;
+                <span id="res-xp-gained" style="color:var(--success);font-weight:700;"></span>
+            </div>
+
+            <div class="result-metrics-grid">
+                <div class="res-card">
+                    <div class="rl">Raw WPM</div>
+                    <div class="rv" id="res-raw">0</div>
+                </div>
+                <div class="res-card">
+                    <div class="rl">Accuracy</div>
+                    <div class="rv" style="color:var(--success)" id="res-acc">100%</div>
+                </div>
+                <div class="res-card">
+                    <div class="rl">Consistency</div>
+                    <div class="rv" style="color:var(--warn)" id="res-consistency">100%</div>
+                </div>
+                <div class="res-card">
+                    <div class="rl">Grade</div>
+                    <div class="rv" style="color:var(--primary)" id="res-grade">A</div>
+                </div>
+                <div class="res-card">
+                    <div class="rl">Mistakes</div>
+                    <div class="rv" style="color:var(--error)" id="res-mistakes">0</div>
+                </div>
+                <div class="res-card">
+                    <div class="rl">Time</div>
+                    <div class="rv" id="res-time">0:00</div>
+                </div>
+            </div>
+
+            <div class="res-charts-row">
+                <div class="chart-wrap-sm"><canvas id="result-timeline-chart"></canvas></div>
+                <div class="chart-wrap-sm"><canvas id="result-pie-chart"></canvas></div>
+            </div>
+
+            <div class="result-actions">
+                <button class="btn btn-ghost" id="btn-res-home">🏠 Home</button>
+                <button class="btn btn-ghost" id="btn-res-share">📋 Share</button>
+                <button class="btn btn-ghost" id="btn-res-next-lesson">→ Next Lesson</button>
+                <button class="btn btn-primary" id="btn-res-retry">🔄 Try Again</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════════
+     MODAL: PRACTICE MODE PICKER
+════════════════════════════════════ -->
+    <div id="practice-modal" class="modal">
+        <div class="modal-box glass-card">
+            <div class="modal-header">
+                <h2>⚡ Choose Practice Mode</h2>
+                <button class="modal-close-btn" id="btn-close-practice">✕</button>
+            </div>
+
+            <h3
+                style="font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-sub);margin-bottom:12px;">
+                ⏱️ Timed Mode</h3>
+            <div class="practice-modes-grid" style="margin-bottom:20px;">
+                <button class="pmode-btn" data-mode="time" data-sub="15">
+                    <div class="pmode-icon">⏱️</div>15 Seconds
+                </button>
+                <button class="pmode-btn" data-mode="time" data-sub="30">
+                    <div class="pmode-icon">⏱️</div>30 Seconds
+                </button>
+                <button class="pmode-btn" data-mode="time" data-sub="60">
+                    <div class="pmode-icon">⏱️</div>60 Seconds
+                </button>
+                <button class="pmode-btn" data-mode="time" data-sub="120">
+                    <div class="pmode-icon">⏱️</div>120 Seconds
+                </button>
+                <button class="pmode-btn" data-mode="time" data-sub="300">
+                    <div class="pmode-icon">⏱️</div>5 Minutes
+                </button>
+            </div>
+
+            <h3
+                style="font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-sub);margin-bottom:12px;">
+                🔤 Word Count Mode</h3>
+            <div class="practice-modes-grid" style="margin-bottom:20px;">
+                <button class="pmode-btn" data-mode="words" data-sub="10">
+                    <div class="pmode-icon">🔤</div>10 Words
+                </button>
+                <button class="pmode-btn" data-mode="words" data-sub="25">
+                    <div class="pmode-icon">🔤</div>25 Words
+                </button>
+                <button class="pmode-btn" data-mode="words" data-sub="50">
+                    <div class="pmode-icon">🔤</div>50 Words
+                </button>
+                <button class="pmode-btn" data-mode="words" data-sub="100">
+                    <div class="pmode-icon">🔤</div>100 Words
+                </button>
+            </div>
+
+            <h3
+                style="font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-sub);margin-bottom:12px;">
+                💻 Code Practice</h3>
+            <div class="practice-modes-grid" style="margin-bottom:20px;">
+                <button class="pmode-btn" data-mode="code" data-sub="javascript">
+                    <div class="pmode-icon">🟡</div>JavaScript
+                </button>
+                <button class="pmode-btn" data-mode="code" data-sub="python">
+                    <div class="pmode-icon">🐍</div>Python
+                </button>
+                <button class="pmode-btn" data-mode="code" data-sub="html">
+                    <div class="pmode-icon">🌐</div>HTML
+                </button>
+                <button class="pmode-btn" data-mode="code" data-sub="css">
+                    <div class="pmode-icon">🎨</div>CSS
+                </button>
+                <button class="pmode-btn" data-mode="code" data-sub="sql">
+                    <div class="pmode-icon">🗄️</div>SQL
+                </button>
+            </div>
+
+            <h3
+                style="font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-sub);margin-bottom:12px;">
+                📝 Custom & Other</h3>
+            <div class="practice-modes-grid" style="margin-bottom:20px;">
+                <button class="pmode-btn" data-mode="free" data-sub="medium">
+                    <div class="pmode-icon">📝</div>Paragraphs
+                </button>
+                <button class="pmode-btn" data-mode="free" data-sub="quotes">
+                    <div class="pmode-icon">💬</div>Quotes
+                </button>
+                <button class="pmode-btn" data-mode="free" data-sub="numbers">
+                    <div class="pmode-icon">🔢</div>Numbers
+                </button>
+                <button class="pmode-btn" data-mode="free" data-sub="symbols">
+                    <div class="pmode-icon">!@#</div>Symbols
+                </button>
+            </div>
+
+            <div style="border-top:1px solid var(--card-border);padding-top:16px;">
+                <h3
+                    style="font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--text-sub);margin-bottom:12px;">
+                    ✍️ Custom Text</h3>
+                <textarea id="custom-text-input" rows="4"
+                    style="width:100%;padding:12px;border-radius:12px;background:rgba(0,0,0,0.3);border:1px solid var(--card-border);color:var(--text);font-family:monospace;font-size:14px;resize:vertical;"
+                    placeholder="Paste your own text here..."></textarea>
+                <div style="display:flex;gap:10px;margin-top:10px;align-items:center;flex-wrap:wrap;">
+                    <button class="btn btn-primary" id="btn-load-custom">▶ Start Custom Practice</button>
+                    <label class="btn btn-ghost" style="cursor:pointer;">
+                        📁 Upload .txt File
+                        <input type="file" id="custom-file-input" accept=".txt" style="display:none">
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════════
+     SCRIPTS (ordered by dependency)
+════════════════════════════════════ -->
+    <script src="./js/data-texts.js"></script>
+    <script src="./js/curriculum.js"></script>
+    <script src="./js/finger-guide.js"></script>
+    <script src="./js/certificate.js"></script>
+    <script src="./js/progress.js"></script>
+    <script src="./js/sound.js"></script>
+    <script src="./js/engine.js"></script>
+    <script src="./js/keyboard.js"></script>
+    <script src="./js/charts.js"></script>
+    <script src="./js/achievements.js"></script>
+    <script src="./js/app.js"></script>
+
+    <!-- Post-load: update sidebar XP bar and hide loading screen -->
+    <script>
+        window.addEventListener('load', () => {
+            // Update sidebar after modules load
+            try {
+                const p = ProgressManager.getProfile();
+                const lvlData = ProgressManager.getLevelProgress(p);
+                const daily = ProgressManager.getDailyData();
+                document.getElementById('sidebar-level').textContent = p.level;
+                document.getElementById('sidebar-xp-bar').style.width = lvlData.percent + '%';
+                document.getElementById('sidebar-xp-label').textContent = `${lvlData.current} / ${lvlData.needed} XP`;
+                document.getElementById('topbar-streak').textContent = daily.currentStreak;
+            } catch (e) { }
+
+            // Fade out loading screen
+            setTimeout(() => {
+                const ls = document.getElementById('loading-screen');
+                if (ls) { ls.classList.add('fade-out'); setTimeout(() => ls.remove(), 600); }
+            }, 1600);
+        });
+    </script>
+
+</body>
+
+</html>

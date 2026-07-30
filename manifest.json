@@ -1,0 +1,46 @@
+{
+    "name": "TypeMaster Academy",
+    "short_name": "TypeMaster",
+    "description": "Master touch typing with 300 structured lessons, finger placement guides, and certificates signed by Mohammed Shakib.",
+    "start_url": "./",
+    "display": "standalone",
+    "background_color": "#0F172A",
+    "theme_color": "#3B82F6",
+    "orientation": "landscape-primary",
+    "categories": ["education", "productivity"],
+    "lang": "en",
+    "icons": [
+        {
+            "src": "./assets/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "./assets/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Quick Practice",
+            "short_name": "Practice",
+            "url": "./?mode=words&sub=30",
+            "icons": [{ "src": "./assets/icon-192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Lesson Map",
+            "short_name": "Lessons",
+            "url": "./?view=lessons",
+            "icons": [{ "src": "./assets/icon-192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Finger Guide",
+            "short_name": "Fingers",
+            "url": "./?view=finger",
+            "icons": [{ "src": "./assets/icon-192.png", "sizes": "192x192" }]
+        }
+    ]
+}

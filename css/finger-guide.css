@@ -1,0 +1,405 @@
+/* ─────────────────────────────────────────────────────────
+   TypeMaster v3 - Finger Guide & Certificate CSS
+───────────────────────────────────────────────────────── */
+
+/* ──────────────────────────────
+   FINGER GUIDE PAGE
+────────────────────────────── */
+.fguide-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.hands-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    padding: 32px;
+}
+
+.hand-svg-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.hand-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-sub);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.hand-svg {
+    width: 180px;
+    height: 200px;
+    overflow: visible;
+    filter: drop-shadow(0 4px 20px rgba(0,0,0,0.4));
+}
+
+.hand-svg g, .hand-svg rect {
+    transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+.hands-center-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    min-width: 180px;
+    max-width: 220px;
+}
+
+.active-finger-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    min-height: 110px;
+    width: 100%;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.fg-badge-icon {
+    font-size: 36px;
+    transition: all 0.3s ease;
+}
+
+.fg-badge-text {
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.5;
+}
+
+.fg-badge-text strong {
+    font-size: 15px;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.space-thumb-hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-size: 13px;
+    width: 100%;
+    justify-content: center;
+}
+
+.thumb-icon { font-size: 20px; }
+
+.finger-legend-full {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--card-border);
+    justify-content: center;
+}
+
+.fl-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.fl-item:hover {
+    background: var(--primary-a);
+    border-color: var(--primary);
+    color: var(--text);
+}
+
+.fl-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ──────────────────────────────
+   FINGER GUIDE: KEYBOARD REFERENCE
+────────────────────────────── */
+.finger-key-reference {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    padding: 0 24px 24px;
+}
+
+.finger-ref-card {
+    border-radius: 14px;
+    padding: 16px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-left: 4px solid;
+    transition: transform 0.2s;
+}
+
+.finger-ref-card:hover { transform: translateY(-2px); }
+
+.finger-ref-name {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.finger-ref-keys {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+/* ──────────────────────────────
+   POSTURE GUIDE SECTION
+────────────────────────────── */
+.posture-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+}
+
+.posture-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.posture-card:hover { transform: translateY(-3px); }
+.posture-icon { font-size: 36px; margin-bottom: 10px; }
+.posture-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.posture-desc { font-size: 12px; color: var(--text-sub); line-height: 1.6; }
+
+/* ──────────────────────────────
+   ARENA: FINGER HINT OVERLAY
+────────────────────────────── */
+.arena-finger-hint {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    transition: all 0.25s ease;
+}
+
+.afh-hand { font-size: 24px; transition: all 0.25s ease; }
+
+.afh-info { flex: 1; }
+.afh-finger { font-size: 13px; font-weight: 700; transition: color 0.25s; }
+.afh-keys { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+.afh-key-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: 900;
+    font-family: 'Fira Code', monospace;
+    transition: all 0.25s ease;
+}
+
+/* ──────────────────────────────
+   CERTIFICATE SECTION ON RESULT MODAL
+────────────────────────────── */
+.cert-unlock-banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(168,85,247,0.15));
+    border: 1px solid var(--warn);
+    border-radius: 14px;
+    margin: 16px 0;
+    animation: certGlow 2s ease infinite alternate;
+}
+
+@keyframes certGlow {
+    from { box-shadow: 0 0 0 rgba(245,158,11,0); }
+    to   { box-shadow: 0 0 24px rgba(245,158,11,0.35); }
+}
+
+.cert-unlock-icon { font-size: 42px; flex-shrink: 0; }
+
+.cert-unlock-text h3 {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--warn);
+    margin-bottom: 4px;
+}
+
+.cert-unlock-text p {
+    font-size: 13px;
+    color: var(--text-sub);
+}
+
+.btn-claim-cert {
+    background: linear-gradient(135deg, #F59E0B, #D97706);
+    color: #fff;
+    font-weight: 800;
+    box-shadow: 0 4px 20px rgba(245,158,11,0.4);
+}
+
+.btn-claim-cert:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px rgba(245,158,11,0.5);
+}
+
+/* ──────────────────────────────
+   CERT EXAM BADGE ON LESSON CARD
+────────────────────────────── */
+.lesson-card.cert-exam {
+    background: linear-gradient(135deg, var(--card), rgba(245,158,11,0.1));
+    border-color: var(--warn);
+}
+
+.lesson-card.cert-exam::after {
+    content: '🎓';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 18px;
+}
+
+/* ──────────────────────────────
+   UNIT CERTIFICATE BADGE
+────────────────────────────── */
+.unit-cert-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--warn-a);
+    border: 1px solid var(--warn);
+    color: var(--warn);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-left: 8px;
+}
+
+/* ──────────────────────────────
+   LESSON CARD STATUS IMPROVEMENTS
+────────────────────────────── */
+.lessons-row-scroll {
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+/* Scroll progress indicator for lesson map */
+.unit-completion-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.unit-completion-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.8s ease;
+}
+
+/* ──────────────────────────────
+   LESSON MAP FILTERS
+────────────────────────────── */
+.lesson-map-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid var(--card-border);
+    background: rgba(255,255,255,0.05);
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-btn:hover, .filter-btn.active {
+    background: var(--primary-a);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* ──────────────────────────────
+   OVERALL PROGRESS BAR (HOME)
+────────────────────────────── */
+.curriculum-progress-card {
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.curriculum-overall {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.curriculum-pct {
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.curriculum-track {
+    flex: 1;
+    height: 12px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.curriculum-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--purple));
+    border-radius: 6px;
+    transition: width 0.8s ease;
+    box-shadow: 0 0 10px var(--glow);
+}
+
+/* Responsive: on mobile, show smaller hands */
+@media (max-width: 680px) {
+    .hand-svg { width: 130px; height: 150px; }
+    .hands-display { gap: 16px; padding: 16px; }
+    .hands-center-info { min-width: 140px; }
+}
