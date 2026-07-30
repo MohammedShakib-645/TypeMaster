@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TypeMaster — Official Student Touch Typing Guide & Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: #0F172A;
+            color: #E2E8F0;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            padding: 30px 20px;
+        }
+
+        .doc-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1E293B;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .doc-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #3B82F6;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .doc-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .doc-icon {
+            font-size: 32px;
+        }
+
+        .doc-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: #FFF;
+        }
+
+        .doc-subtitle {
+            font-size: 13px;
+            color: #94A3B8;
+        }
+
+        h2 {
+            font-size: 18px;
+            font-weight: 800;
+            color: #3B82F6;
+            margin: 24px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        p, li {
+            font-size: 14px;
+            color: #CBD5E1;
+        }
+
+        ul {
+            padding-left: 20px;
+            margin-bottom: 16px;
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 13px;
+        }
+
+        .matrix-table th, .matrix-table td {
+            padding: 10px 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: left;
+        }
+
+        .matrix-table th {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3B82F6;
+            font-weight: 800;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(0,0,0,0.4);
+            color: #F59E0B;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .print-bar {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .btn-print {
+            background: #3B82F6;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(59,130,246,0.4);
+        }
+
+        @media print {
+            body { background: #fff !important; color: #111 !important; padding: 0 !important; }
+            .doc-container { border: none !important; box-shadow: none !important; background: #fff !important; color: #111 !important; padding: 0 !important; }
+            .doc-title { color: #0B192C !important; }
+            .matrix-table th { background: #F1F5F9 !important; color: #0B192C !important; }
+            .matrix-table td { border: 1px solid #CBD5E1 !important; color: #111 !important; }
+            .print-bar { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="doc-container">
+    <div class="doc-header">
+        <div class="doc-brand">
+            <span class="doc-icon">⚡</span>
+            <div>
+                <div class="doc-title">TypeMaster Student Handbook</div>
+                <div class="doc-subtitle">Official 10-Finger Touch Typing Documentation & Manual</div>
+            </div>
+        </div>
+        <div style="text-align:right;">
+            <div style="font-size:12px;font-weight:700;color:#F59E0B;">Founder & Director</div>
+            <div style="font-size:14px;font-weight:900;color:#FFF;">Mohammed Shakib</div>
+        </div>
+    </div>
+
+    <h2>🖐️ 1. Home Row Foundation Rules</h2>
+    <p>The Home Row is your anchor position on the keyboard. After striking any upper or lower key, your fingers must automatically return to these positions:</p>
+    <ul style="margin-top:10px;">
+        <li><strong>Left Hand:</strong> Pinky on <code>A</code>, Ring on <code>S</code>, Middle on <code>D</code>, Index on <code>F</code></li>
+        <li><strong>Right Hand:</strong> Index on <code>J</code>, Middle on <code>K</code>, Ring on <code>L</code>, Pinky on <code>;</code></li>
+        <li><strong>Thumbs:</strong> Rest gently on <code>Spacebar</code></li>
+    </ul>
+
+    <h2>🎯 2. Complete 10-Finger Key Mapping Matrix</h2>
+    <table class="matrix-table">
+        <thead>
+            <tr>
+                <th>Finger</th>
+                <th>Home Key</th>
+                <th>Assigned Keys & Reach Zones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Left Pinky</strong></td>
+                <td><code>Key A</code></td>
+                <td>` ~ 1 Q A Z Tab Caps Shift Ctrl</td>
+            </tr>
+            <tr>
+                <td><strong>Left Ring</strong></td>
+                <td><code>Key S</code></td>
+                <td>2 W S X</td>
+            </tr>
+            <tr>
+                <td><strong>Left Middle</strong></td>
+                <td><code>Key D</code></td>
+                <td>3 E D C</td>
+            </tr>
+            <tr>
+                <td><strong>Left Index</strong></td>
+                <td><code>Key F</code></td>
+                <td>4 5 R T F G V B</td>
+            </tr>
+            <tr>
+                <td><strong>Right Index</strong></td>
+                <td><code>Key J</code></td>
+                <td>6 7 Y U H J N M</td>
+            </tr>
+            <tr>
+                <td><strong>Right Middle</strong></td>
+                <td><code>Key K</code></td>
+                <td>8 I K ,</td>
+            </tr>
+            <tr>
+                <td><strong>Right Ring</strong></td>
+                <td><code>Key L</code></td>
+                <td>9 O L .</td>
+            </tr>
+            <tr>
+                <td><strong>Right Pinky</strong></td>
+                <td><code>Key ;</code></td>
+                <td>0 - = P [ ] ; ' / Enter Shift Backspace</td>
+            </tr>
+            <tr>
+                <td><strong>Both Thumbs</strong></td>
+                <td><code>Spacebar</code></td>
+                <td>Spacebar (Use thumb opposite to your previous key strike)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>🎓 3. Curriculum Structure & Milestone Certificates</h2>
+    <p>TypeMaster features 300 lessons divided into 15 units. Completing major milestones automatically awards official signed certificates:</p>
+    <ul style="margin-top:10px;">
+        <li><strong>Beginner Certificate:</strong> Complete Lesson 15 (Min 15 WPM, 90% Acc)</li>
+        <li><strong>Elementary Certificate:</strong> Complete Lesson 30 (Min 25 WPM, 92% Acc)</li>
+        <li><strong>Intermediate Certificate:</strong> Complete Lesson 75 (Min 40 WPM, 94% Acc)</li>
+        <li><strong>Advanced Certificate:</strong> Complete Lesson 150 (Min 55 WPM, 95% Acc)</li>
+        <li><strong>Professional Certificate:</strong> Complete Lesson 225 (Min 70 WPM, 96% Acc)</li>
+        <li><strong>Master Certificate:</strong> Complete Lesson 300 (Min 85 WPM, 98% Acc)</li>
+    </ul>
+
+    <h2>🚀 4. Golden Rules for 100+ WPM Typing Speed</h2>
+    <ul>
+        <li><strong>Never Look at the Keyboard:</strong> Build motor memory by keeping your eyes on the screen at all times.</li>
+        <li><strong>Prioritize Accuracy Over Speed:</strong> Speed naturally accelerates once 98%+ accuracy is mastered.</li>
+        <li><strong>Maintain Rhythmic Cadence:</strong> Type with a steady beat rather than irregular fast bursts.</li>
+        <li><strong>Use Opposite Shift Key:</strong> When capitalizing a left-hand character, press Shift with your right pinky.</li>
+    </ul>
+
+    <div style="margin-top:30px;border-top:1px solid rgba(255,255,255,0.1);padding-top:20px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:12px;color:#94A3B8;">TypeMaster Academy Official Handbook · Issued by Mohammed Shakib</div>
+        <a href="index.html" style="color:#3B82F6;text-decoration:none;font-weight:700;font-size:13px;">← Return to TypeMaster App</a>
+    </div>
+</div>
+
+<div class="print-bar">
+    <button class="btn-print" onclick="window.print()">🖨️ Save PDF / Print Guide</button>
+</div>
+
+</body>
+</html>
