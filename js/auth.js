@@ -21,8 +21,20 @@ const AuthEngine = {
     getActiveStudent() {
         try {
             const data = localStorage.getItem('tm_active_student_v1') || sessionStorage.getItem('tm_active_student_v1');
-            return data ? JSON.parse(data) : null;
+            if (!data) return null;
+            const student = JSON.parse(data);
+            // Invalidate legacy guest student sessions
+            if (student && (student.email === 'guest@typemaster.app' || student.username === 'guest')) {
+                this.logoutSilently();
+                return null;
+            }
+            return student;
         } catch { return null; }
+    },
+
+    logoutSilently() {
+        localStorage.removeItem('tm_active_student_v1');
+        sessionStorage.removeItem('tm_active_student_v1');
     },
 
     setActiveStudent(student, rememberMe = true) {
@@ -32,6 +44,86 @@ const AuthEngine = {
         } else {
             sessionStorage.setItem('tm_active_student_v1', json);
         }
+    },
+
+    loginWithGoogle(googleProfile) {
+        const cleanEmail = (googleProfile.email || '').trim().toLowerCase();
+        const cleanName = (googleProfile.fullName || googleProfile.name || 'Google User').trim();
+        const googleId = googleProfile.googleId || googleProfile.sub || 'G-' + Date.now();
+        const avatar = googleProfile.avatar || googleProfile.picture || '🌐';
+
+        if (!cleanEmail) {
+            return { success: false, message: 'Google authentication failed: Email missing.' };
+        }
+
+        const students = this.getStudents();
+        let student = students.find(s => s.email.toLowerCase() === cleanEmail);
+
+        if (student) {
+            student.authProvider = 'google';
+            student.googleId = googleId;
+            if (avatar) student.avatar = avatar;
+            this.saveStudents(students);
+            this.setActiveStudent(student, true);
+            return { success: true, student: student, isNew: false };
+        } else {
+            const baseUser = cleanEmail.split('@')[0].replace(/[^a-z0-9_]/gi, '').toLowerCase();
+            let username = baseUser || 'student';
+            let counter = 1;
+            while (students.some(s => s.username.toLowerCase() === username)) {
+                username = `${baseUser}${counter++}`;
+            }
+
+            const newStudent = {
+                id: 'STU-' + Date.now().toString(36).toUpperCase(),
+                fullName: cleanName,
+                username: username,
+                email: cleanEmail,
+                authProvider: 'google',
+                googleId: googleId,
+                status: 'active',
+                avatar: avatar,
+                joinedDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+                joinedTimestamp: Date.now()
+            };
+
+            students.push(newStudent);
+            this.saveStudents(students);
+            this.setActiveStudent(newStudent, true);
+
+            return { success: true, student: newStudent, isNew: true };
+        }
+    },
+
+    decodeJwtPayload(token) {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        } catch (e) {
+            console.error('Failed to decode JWT payload', e);
+            return null;
+        }
+    },
+
+    handleGoogleCredential(responseToken) {
+        const payload = this.decodeJwtPayload(responseToken);
+        if (!payload) {
+            return { success: false, message: 'Could not decode Google Sign-In response.' };
+        }
+
+        const profile = {
+            googleId: payload.sub,
+            fullName: payload.name,
+            email: payload.email,
+            avatar: payload.picture,
+            provider: 'google'
+        };
+
+        return this.loginWithGoogle(profile);
     },
 
     register(fullName, username, email, password, confirmPassword) {

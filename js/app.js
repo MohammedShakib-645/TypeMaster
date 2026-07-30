@@ -1614,14 +1614,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // Modal close buttons
     document.querySelectorAll('.modal-close-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            btn.closest('.modal').classList.remove('open');
+            const modal = btn.closest('.modal');
+            if (modal && modal.id === 'student-auth-modal' && (typeof AuthEngine === 'undefined' || !AuthEngine.getActiveStudent())) {
+                showToast('⚠️', 'Account Required', 'Please sign in, register, or use Google Login to access TypeMaster.');
+                return;
+            }
+            if (modal) modal.classList.remove('open');
         });
     });
 
     // Modal backdrop click
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', e => {
-            if (e.target === modal) modal.classList.remove('open');
+            if (e.target === modal) {
+                if (modal.id === 'student-auth-modal' && (typeof AuthEngine === 'undefined' || !AuthEngine.getActiveStudent())) {
+                    return;
+                }
+                modal.classList.remove('open');
+            }
         });
     });
 
@@ -1729,7 +1739,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (e.key === 'Escape') {
             const openModal = document.querySelector('.modal.open');
-            if (openModal) openModal.classList.remove('open');
+            if (openModal) {
+                if (openModal.id === 'student-auth-modal' && (typeof AuthEngine === 'undefined' || !AuthEngine.getActiveStudent())) {
+                    return;
+                }
+                openModal.classList.remove('open');
+            }
         }
     });
 
@@ -1780,7 +1795,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Student Auth Modal Handlers
+    // Student Auth Modal Handlers & Google SSO
     if (typeof AuthEngine !== 'undefined') {
         const activeStudent = AuthEngine.getActiveStudent();
         if (activeStudent) {
@@ -1790,19 +1805,95 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const modal = $('student-auth-modal');
                 if (modal) modal.classList.add('open');
-            }, 600);
+            }, 500);
         }
 
-        const btnGuest = $('btn-guest-login');
-        if (btnGuest) {
-            btnGuest.onclick = () => {
-                const guest = { fullName: 'Guest Student', username: 'guest', email: 'guest@typemaster.app' };
-                AuthEngine.setActiveStudent(guest, false);
-                const modal = $('student-auth-modal');
-                if (modal) modal.classList.remove('open');
-                const labelEl = $('topbar-student-name');
-                if (labelEl) labelEl.textContent = 'Guest Student';
-                showToast('👋', 'Welcome Guest!', 'Continuing as Guest Student.');
+        // Global Google Identity Services Callback
+        window.handleGoogleSignInCallback = function(response) {
+            if (response && response.credential) {
+                const res = AuthEngine.handleGoogleCredential(response.credential);
+                if (res.success) {
+                    showToast('🌐', 'Google Login Success!', `Signed in as ${res.student.fullName}`);
+                    const modal = $('student-auth-modal');
+                    if (modal) modal.classList.remove('open');
+                    const labelEl = $('topbar-student-name');
+                    if (labelEl) labelEl.textContent = res.student.fullName;
+                } else {
+                    const alertEl = $('auth-alert-msg');
+                    if (alertEl) {
+                        alertEl.style.display = 'block';
+                        alertEl.textContent = res.message || 'Google Sign-In failed.';
+                    }
+                }
+            }
+        };
+
+        // Google Sign-In Button Trigger
+        const btnGoogle = $('btn-google-login');
+        if (btnGoogle) {
+            btnGoogle.onclick = () => {
+                if (window.google && google.accounts && google.accounts.id) {
+                    try {
+                        google.accounts.id.initialize({
+                            client_id: "1083928172931-demo.apps.googleusercontent.com",
+                            callback: window.handleGoogleSignInCallback
+                        });
+                        google.accounts.id.prompt((notification) => {
+                            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                                const gEmail = prompt('Enter your Google Email Address:');
+                                if (!gEmail) return;
+                                const gName = prompt('Enter your Full Name:', gEmail.split('@')[0]);
+                                const res = AuthEngine.loginWithGoogle({
+                                    email: gEmail,
+                                    fullName: gName || gEmail.split('@')[0],
+                                    avatar: '🌐',
+                                    googleId: 'G-' + Date.now()
+                                });
+                                if (res.success) {
+                                    showToast('🌐', 'Google Login Success!', `Welcome, ${res.student.fullName}`);
+                                    const modal = $('student-auth-modal');
+                                    if (modal) modal.classList.remove('open');
+                                    const labelEl = $('topbar-student-name');
+                                    if (labelEl) labelEl.textContent = res.student.fullName;
+                                }
+                            }
+                        });
+                    } catch (err) {
+                        const gEmail = prompt('Enter your Google Email Address:');
+                        if (!gEmail) return;
+                        const gName = prompt('Enter your Full Name:', gEmail.split('@')[0]);
+                        const res = AuthEngine.loginWithGoogle({
+                            email: gEmail,
+                            fullName: gName || gEmail.split('@')[0],
+                            avatar: '🌐',
+                            googleId: 'G-' + Date.now()
+                        });
+                        if (res.success) {
+                            showToast('🌐', 'Google Login Success!', `Welcome, ${res.student.fullName}`);
+                            const modal = $('student-auth-modal');
+                            if (modal) modal.classList.remove('open');
+                            const labelEl = $('topbar-student-name');
+                            if (labelEl) labelEl.textContent = res.student.fullName;
+                        }
+                    }
+                } else {
+                    const gEmail = prompt('Enter your Google Email Address for Google Sign-In:');
+                    if (!gEmail) return;
+                    const gName = prompt('Enter your Full Name:', gEmail.split('@')[0]);
+                    const res = AuthEngine.loginWithGoogle({
+                        email: gEmail,
+                        fullName: gName || gEmail.split('@')[0],
+                        avatar: '🌐',
+                        googleId: 'G-' + Date.now()
+                    });
+                    if (res.success) {
+                        showToast('🌐', 'Google Login Success!', `Welcome, ${res.student.fullName}`);
+                        const modal = $('student-auth-modal');
+                        if (modal) modal.classList.remove('open');
+                        const labelEl = $('topbar-student-name');
+                        if (labelEl) labelEl.textContent = res.student.fullName;
+                    }
+                }
             };
         }
 
@@ -1824,6 +1915,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnCloseAuth = $('btn-close-auth-modal');
         if (btnCloseAuth) {
             btnCloseAuth.onclick = () => {
+                const current = AuthEngine.getActiveStudent();
+                if (!current) {
+                    showToast('⚠️', 'Account Required', 'Please sign in with Google or create an account to use TypeMaster.');
+                    return;
+                }
                 const modal = $('student-auth-modal');
                 if (modal) modal.classList.remove('open');
             };
