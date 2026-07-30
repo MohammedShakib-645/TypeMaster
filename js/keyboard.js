@@ -1,5 +1,6 @@
 /**
- * TypeMaster - Visual QWERTY Keyboard Component
+ * TypeMaster - Visual QWERTY Keyboard Component with Interactive Directional Hands
+ * Renders full QWERTY layout with dynamic finger extensions and motion trajectories.
  */
 
 const KEYBOARD_ROWS = [
@@ -20,6 +21,13 @@ const FINGER_LABELS = {
     pl:'Left Pinky', rl:'Left Ring', ml:'Left Middle', il:'Left Index',
     ir:'Right Index', mr:'Right Middle', rr:'Right Ring', pr:'Right Pinky',
     th:'Thumb'
+};
+
+// Home key for each finger (base resting position)
+const FINGER_HOME_KEY = {
+    pl: 'KeyA', rl: 'KeyS', ml: 'KeyD', il: 'KeyF',
+    ir: 'KeyJ', mr: 'KeyK', rr: 'KeyL', pr: 'Semicolon',
+    th: 'Space'
 };
 
 class VirtualKeyboard {
@@ -46,6 +54,7 @@ class VirtualKeyboard {
         this.el.innerHTML = '';
         const wrap = document.createElement('div');
         wrap.className = 'vkb-wrap';
+        wrap.id = 'vkb-wrap-main';
 
         KEYBOARD_ROWS.forEach(row => {
             const rowEl = document.createElement('div');
@@ -53,6 +62,8 @@ class VirtualKeyboard {
             row.forEach(key => {
                 const k = document.createElement('div');
                 k.className = `vkb-key finger-${key.f}`;
+                k.setAttribute('data-code', key.code);
+                k.setAttribute('data-finger', key.f);
                 if (key.home) k.classList.add('home-key');
                 if (key.w) k.style.width = key.w + 'px';
                 k.style.setProperty('--finger-color', FINGER_COLORS[key.f]);
@@ -68,6 +79,25 @@ class VirtualKeyboard {
             wrap.appendChild(rowEl);
         });
 
+        // Directional SVG Layer
+        const svgLayer = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svgLayer.setAttribute('class', 'vkb-hands-overlay');
+        svgLayer.id = 'vkb-hands-overlay';
+        svgLayer.innerHTML = `
+            <defs>
+                <marker id="arrow-head" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#3B82F6"/>
+                </marker>
+                <filter id="glow-filter" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+            </defs>
+            <g id="vkb-hands-outline-group" opacity="0.35"></g>
+            <g id="vkb-motion-path-group"></g>
+        `;
+        wrap.appendChild(svgLayer);
+
         // Finger legend
         const legend = document.createElement('div');
         legend.className = 'vkb-legend';
@@ -79,6 +109,9 @@ class VirtualKeyboard {
         });
         wrap.appendChild(legend);
         this.el.appendChild(wrap);
+
+        // Render hand outlines after DOM layout settles
+        setTimeout(() => this.drawHandOutlines(), 50);
     }
 
     _bindPhysical() {
@@ -99,7 +132,14 @@ class VirtualKeyboard {
     }
 
     highlightKey(char) {
-        if (this.activeTarget) this.activeTarget.classList.remove('vkb-target');
+        if (this.activeTarget) {
+            this.activeTarget.classList.remove('vkb-target');
+            const indicator = this.activeTarget.querySelector('.vkb-finger-indicator');
+            if (indicator) indicator.remove();
+        }
+
+        this.clearMotionPath();
+
         if (!char) return;
 
         let code = null;
@@ -114,11 +154,125 @@ class VirtualKeyboard {
         if (code && this.keyEls[code]) {
             this.activeTarget = this.keyEls[code];
             this.activeTarget.classList.add('vkb-target');
+
+            const fingerCode = this.activeTarget.getAttribute('data-finger');
+            const fingerColor = FINGER_COLORS[fingerCode] || '#3B82F6';
+
+            // Add finger label pill on target key
+            const indicator = document.createElement('span');
+            indicator.className = 'vkb-finger-indicator';
+            indicator.style.background = fingerColor;
+            indicator.textContent = FINGER_LABELS[fingerCode] ? FINGER_LABELS[fingerCode].split(' ')[1] : 'Touch';
+            this.activeTarget.appendChild(indicator);
+
+            // Draw motion path & finger reach animation
+            this.drawDirectionPath(fingerCode, code, fingerColor);
         }
     }
 
     highlightNext(char) {
         this.highlightKey(char);
+    }
+
+    drawHandOutlines() {
+        const group = document.getElementById('vkb-hands-outline-group');
+        if (!group) return;
+
+        // Position hand outlines at home row keys (A S D F & J K L ;)
+        const fKey = this.keyEls['KeyF'];
+        const jKey = this.keyEls['KeyJ'];
+        if (!fKey || !jKey) return;
+
+        const wrap = document.getElementById('vkb-wrap-main');
+        if (!wrap) return;
+        const wrapRect = wrap.getBoundingClientRect();
+
+        const fRect = fKey.getBoundingClientRect();
+        const jRect = jKey.getBoundingClientRect();
+
+        const leftX = fRect.left - wrapRect.left - 40;
+        const leftY = fRect.top - wrapRect.top + 20;
+
+        const rightX = jRect.left - wrapRect.left - 20;
+        const rightY = jRect.top - wrapRect.top + 20;
+
+        group.innerHTML = `
+            <!-- Left Hand Outline -->
+            <g transform="translate(${leftX}, ${leftY})">
+                <path d="M -60 120 C -60 70 -50 20 -40 -10 C -38 -15 -32 -15 -30 -10 C -25 15 -25 50 -25 70 C -20 10 -15 -25 -10 -35 C -8 -40 -2 -40 0 -35 C 5 5 5 45 5 65 C 10 5 15 -20 20 -30 C 22 -35 28 -35 30 -30 C 35 10 35 40 35 60 C 45 25 55 10 65 25 C 70 32 65 45 55 60 C 45 75 35 90 20 120"
+                      fill="rgba(59, 130, 246, 0.05)" stroke="rgba(59, 130, 246, 0.35)" stroke-width="2" stroke-linecap="round"/>
+            </g>
+            <!-- Right Hand Outline -->
+            <g transform="translate(${rightX}, ${rightY})">
+                <path d="M -20 120 C -35 90 -45 75 -55 60 C -65 45 -70 32 -65 25 C -55 10 -45 25 -35 60 C -35 40 -35 10 -30 -30 C -28 -35 -22 -35 -20 -30 C -15 -20 -10 5 -5 65 C -5 45 -5 5 0 -35 C 2 -40 8 -40 10 -35 C 15 -25 20 10 25 70 C 25 50 25 15 30 -10 C 32 -15 38 -15 40 -10 C 50 20 60 70 60 120"
+                      fill="rgba(139, 92, 246, 0.05)" stroke="rgba(139, 92, 246, 0.35)" stroke-width="2" stroke-linecap="round"/>
+            </g>
+        `;
+    }
+
+    drawDirectionPath(fingerCode, targetCode, color) {
+        const motionGroup = document.getElementById('vkb-motion-path-group');
+        if (!motionGroup) return;
+
+        const homeCode = FINGER_HOME_KEY[fingerCode];
+        const homeKeyEl = this.keyEls[homeCode];
+        const targetKeyEl = this.keyEls[targetCode];
+
+        if (!homeKeyEl || !targetKeyEl) return;
+
+        const wrap = document.getElementById('vkb-wrap-main');
+        if (!wrap) return;
+
+        const wrapRect = wrap.getBoundingClientRect();
+        const homeRect = homeKeyEl.getBoundingClientRect();
+        const targetRect = targetKeyEl.getBoundingClientRect();
+
+        const x1 = (homeRect.left + homeRect.width / 2) - wrapRect.left;
+        const y1 = (homeRect.top + homeRect.height / 2) - wrapRect.top;
+
+        const x2 = (targetRect.left + targetRect.width / 2) - wrapRect.left;
+        const y2 = (targetRect.top + targetRect.height / 2) - wrapRect.top;
+
+        const isHomeKey = homeCode === targetCode;
+
+        if (isHomeKey) {
+            // Pulse circle directly on home key
+            motionGroup.innerHTML = `
+                <circle cx="${x2}" cy="${y2}" r="18" fill="none" stroke="${color}" stroke-width="3" opacity="0.8" filter="url(#glow-filter)">
+                    <animate attributeName="r" values="14;22;14" dur="1.2s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.9;0.3;0.9" dur="1.2s" repeatCount="indefinite"/>
+                </circle>
+            `;
+            return;
+        }
+
+        // Curved reach path from home key to target key
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const cx = x1 + dx * 0.5 + (dy > 0 ? -15 : 15);
+        const cy = y1 + dy * 0.5 - 10;
+
+        const pathD = `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`;
+
+        motionGroup.innerHTML = `
+            <!-- Motion Trajectory Line -->
+            <path d="${pathD}" fill="none" stroke="${color}" stroke-width="3.5" stroke-dasharray="6,4" opacity="0.85" filter="url(#glow-filter)">
+                <animate attributeName="stroke-dashoffset" values="20;0" dur="0.6s" repeatCount="indefinite"/>
+            </path>
+
+            <!-- Extended Finger Tip Marker -->
+            <circle cx="${x2}" cy="${y2}" r="16" fill="${color}33" stroke="${color}" stroke-width="2.5">
+                <animate attributeName="r" values="12;18;12" dur="1s" repeatCount="indefinite"/>
+            </circle>
+
+            <!-- Base Home Circle -->
+            <circle cx="${x1}" cy="${y1}" r="6" fill="${color}" opacity="0.7"/>
+        `;
+    }
+
+    clearMotionPath() {
+        const motionGroup = document.getElementById('vkb-motion-path-group');
+        if (motionGroup) motionGroup.innerHTML = '';
     }
 }
 

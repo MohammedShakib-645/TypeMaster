@@ -420,13 +420,25 @@
     flex-direction: column;
     align-items: center;
     gap: 6px;
-    padding: 20px;
+    padding: 24px 20px 30px;
     min-width: fit-content;
+    position: relative;
+}
+
+.vkb-hands-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 2;
+    overflow: visible;
 }
 
 .vkb-row {
     display: flex;
     gap: 5px;
+    position: relative;
+    z-index: 3;
 }
 
 .vkb-key {
@@ -458,15 +470,40 @@
 }
 
 .vkb-key.vkb-target {
-    border-color: var(--primary);
-    box-shadow: 0 0 14px var(--glow);
-    animation: keyPulse 1s infinite;
-    color: var(--primary);
+    border-color: var(--finger-color, var(--primary));
+    background: rgba(59, 130, 246, 0.2);
+    box-shadow: 0 0 18px var(--finger-color, var(--glow));
+    animation: keyPulse 1s infinite alternate;
+    color: #fff;
+    font-weight: 900;
+    z-index: 4;
+}
+
+.vkb-finger-indicator {
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 10px;
+    color: #fff;
+    white-space: nowrap;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+    z-index: 10;
+    animation: indicatorBounce 0.8s ease infinite alternate;
+    letter-spacing: 0.5px;
+}
+
+@keyframes indicatorBounce {
+    from { transform: translateX(-50%) translateY(0); }
+    to   { transform: translateX(-50%) translateY(-3px); }
 }
 
 @keyframes keyPulse {
-    0%, 100% { transform: scale(1); }
-    50%       { transform: scale(1.08); }
+    from { transform: scale(1); box-shadow: 0 0 10px var(--finger-color, var(--glow)); }
+    to   { transform: scale(1.08); box-shadow: 0 0 22px var(--finger-color, var(--glow)); }
 }
 
 .home-key .home-bump {
