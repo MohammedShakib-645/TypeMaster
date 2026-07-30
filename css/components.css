@@ -772,3 +772,9 @@
     from { width: 0; }
     to   { width: 100%; }
 }
+
+@media (max-width: 990px) {
+    .cert-layout-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
