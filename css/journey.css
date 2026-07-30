@@ -1,0 +1,231 @@
+/**
+ * TypeMaster — Journey Timeline Styles
+ * Visual roadmap Lesson 1 → 300
+ */
+
+/* ── Journey Timeline Container ─────────────────────────── */
+.journey-timeline-wrap {
+    padding: 8px 0;
+    position: relative;
+}
+
+.journey-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: var(--text-sub);
+}
+
+.journey-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.journey-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ── Unit Row ──────────────────────────────────────────── */
+.journey-unit {
+    margin-bottom: 28px;
+}
+
+.journey-unit-header {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.journey-unit-progress {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-sub);
+    margin-left: auto;
+}
+
+/* ── Lesson Node Grid ──────────────────────────────────── */
+.journey-nodes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    position: relative;
+}
+
+/* ── Single Node ───────────────────────────────────────── */
+.journey-node {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position: relative;
+    border: 2px solid transparent;
+    user-select: none;
+}
+
+.journey-node:hover {
+    transform: scale(1.15);
+    z-index: 10;
+}
+
+.journey-node[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 99;
+}
+
+/* Completed lesson */
+.journey-node.completed {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: #22C55E;
+    color: #22C55E;
+}
+
+/* Current lesson (pulse animation) */
+.journey-node.current {
+    background: rgba(59, 130, 246, 0.25);
+    border-color: #3B82F6;
+    color: #3B82F6;
+    animation: journey-pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+}
+
+@keyframes journey-pulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(59, 130, 246, 0.4); }
+    50%       { box-shadow: 0 0 20px rgba(59, 130, 246, 0.8); }
+}
+
+/* Attempted (incomplete) */
+.journey-node.attempted {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: #F59E0B;
+    color: #F59E0B;
+}
+
+/* Locked lesson */
+.journey-node.locked {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.2);
+    cursor: default;
+}
+
+.journey-node.locked:hover {
+    transform: none;
+}
+
+/* Exam node */
+.journey-node.exam {
+    background: rgba(253, 224, 71, 0.15);
+    border-color: #FDE047;
+    color: #FDE047;
+    border-radius: 50%;
+}
+
+/* Certificate milestone */
+.journey-node.milestone {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(253, 224, 71, 0.15));
+    border-color: #D4AF37;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+/* ── Journey Progress Bar ──────────────────────────────── */
+.journey-overall-progress {
+    margin-bottom: 24px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+}
+
+.journey-progress-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+.journey-progress-title {
+    font-weight: 700;
+    color: #FFF;
+}
+
+.journey-progress-pct {
+    font-weight: 900;
+    font-size: 18px;
+    color: var(--primary);
+}
+
+.journey-bar-track {
+    height: 10px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.journey-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--primary), #8B5CF6);
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Stats Row ─────────────────────────────────────────── */
+.journey-stats-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.journey-stat-card {
+    flex: 1;
+    min-width: 100px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+}
+
+.journey-stat-value {
+    font-size: 22px;
+    font-weight: 900;
+}
+
+.journey-stat-label {
+    font-size: 11px;
+    color: var(--text-sub);
+    margin-top: 3px;
+}

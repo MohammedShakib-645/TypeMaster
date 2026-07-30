@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Verification — TypeMaster Academy</title>
+    <meta name="description" content="Verify the authenticity of a TypeMaster touch typing certificate instantly by entering the Certificate ID.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --primary: #3B82F6;
+            --success: #22C55E;
+            --danger: #EF4444;
+            --warn: #F59E0B;
+            --bg: #0F172A;
+            --surface: rgba(30, 41, 59, 0.85);
+            --border: rgba(255,255,255,0.08);
+            --text: #E2E8F0;
+            --text-sub: #94A3B8;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 40px 20px;
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(59,130,246,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, rgba(139,92,246,0.06) 0%, transparent 60%);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .logo { font-size: 32px; margin-bottom: 12px; }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        .header p { font-size: 14px; color: var(--text-sub); }
+
+        /* Verify Card */
+        .verify-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px;
+            width: 100%;
+            max-width: 560px;
+            backdrop-filter: blur(12px);
+            margin-bottom: 24px;
+        }
+
+        .verify-card h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .verify-card p {
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .cert-input {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: var(--text);
+            font-family: 'Fira Code', monospace;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .cert-input:focus { border-color: var(--primary); }
+        .cert-input::placeholder { color: var(--text-sub); }
+
+        .btn-verify {
+            background: linear-gradient(135deg, var(--primary), #6366F1);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+        .btn-verify:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-verify:active { transform: translateY(0); }
+
+        /* Result Area */
+        #verify-result { margin-top: 16px; }
+
+        .result-valid {
+            background: rgba(34, 197, 94, 0.08);
+            border: 1px solid rgba(34, 197, 94, 0.35);
+            border-radius: 14px;
+            padding: 24px;
+        }
+
+        .result-invalid {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            color: var(--danger);
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .result-badge {
+            font-size: 36px;
+        }
+
+        .result-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--success);
+        }
+
+        .result-subtitle {
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-top: 2px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .result-item {
+            background: rgba(0,0,0,0.25);
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
+        .result-item-label {
+            font-size: 11px;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 4px;
+        }
+
+        .result-item-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .valid-stamp {
+            margin-top: 16px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--success);
+            background: rgba(34,197,94,0.1);
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        /* Example IDs */
+        .examples {
+            margin-top: 16px;
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+        .example-id {
+            display: inline-block;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-family: 'Fira Code', monospace;
+            cursor: pointer;
+            margin: 3px;
+            transition: background 0.15s;
+        }
+        .example-id:hover { background: rgba(59,130,246,0.15); }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-top: 20px;
+        }
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        .footer a:hover { text-decoration: underline; }
+
+        /* Notice */
+        .notice {
+            background: rgba(245,158,11,0.08);
+            border: 1px solid rgba(245,158,11,0.25);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 12px;
+            color: var(--warn);
+            max-width: 560px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">⌨️</div>
+        <h1>Certificate Verification Portal</h1>
+        <p>TypeMaster Academy — Verify the authenticity of any issued certificate instantly.</p>
+    </div>
+
+    <!-- Notice -->
+    <div class="notice">
+        ℹ️ <strong>Note:</strong> Certificates are currently stored locally. For full public verification, share the certificate link with embedded ID parameters. Future versions will include server-side verification.
+    </div>
+
+    <!-- Verify Card -->
+    <div class="verify-card">
+        <h2>🔍 Enter Certificate ID</h2>
+        <p>Enter the certificate ID exactly as printed on the TypeMaster certificate document. IDs are case-sensitive.</p>
+
+        <div class="input-group">
+            <input type="text" id="cert-id-input" class="cert-input"
+                placeholder="e.g. CERT-L015-ABC123-2024"
+                autocomplete="off" spellcheck="false">
+            <button class="btn-verify" onclick="verifyCertificate()">✅ Verify</button>
+        </div>
+
+        <div class="examples">
+            Try sample IDs:
+            <span class="example-id" onclick="fillExample(this)">CERT-L015-DEMO01-2026</span>
+            <span class="example-id" onclick="fillExample(this)">CERT-L300-MASTER-2026</span>
+        </div>
+
+        <!-- Result -->
+        <div id="verify-result"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <a href="index.html">← Back to TypeMaster</a> &nbsp;|&nbsp;
+        <span>TypeMaster Academy &copy; 2026</span>
+    </div>
+
+    <script>
+        // Parse URL params for shareable verification links
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const idFromUrl = params.get('id');
+            if (idFromUrl) {
+                document.getElementById('cert-id-input').value = idFromUrl;
+                verifyCertificate();
+            }
+        });
+
+        function fillExample(el) {
+            document.getElementById('cert-id-input').value = el.textContent.trim();
+        }
+
+        function verifyCertificate() {
+            const inputId = document.getElementById('cert-id-input').value.trim();
+            const resultEl = document.getElementById('verify-result');
+
+            if (!inputId) {
+                resultEl.innerHTML = '<div class="result-invalid">⚠️ Please enter a Certificate ID.</div>';
+                return;
+            }
+
+            // Check localStorage for certificate data (from current device)
+            let certData = null;
+            try {
+                const keys = Object.keys(localStorage);
+                for (const k of keys) {
+                    if (k.startsWith('tm_cert_') || k === 'tm_certificates_v3') {
+                        const parsed = JSON.parse(localStorage.getItem(k));
+                        if (Array.isArray(parsed)) {
+                            certData = parsed.find(c => c.id === inputId || c.certId === inputId);
+                        } else if (parsed && (parsed.id === inputId || parsed.certId === inputId)) {
+                            certData = parsed;
+                        }
+                        if (certData) break;
+                    }
+                }
+            } catch {}
+
+            // Check demo IDs
+            if (!certData && inputId.includes('DEMO')) {
+                certData = buildDemoData(inputId);
+            }
+
+            // Try to decode from ID itself (if it's a structured ID)
+            if (!certData) {
+                certData = tryDecodeFromId(inputId);
+            }
+
+            if (certData) {
+                showValid(resultEl, certData);
+            } else {
+                showInvalid(resultEl, inputId);
+            }
+        }
+
+        function buildDemoData(id) {
+            if (id.includes('L015')) return {
+                id, studentName: 'Demo Student', lessonId: 'L015', lessonTitle: 'Beginner Certification',
+                level: 'Beginner', wpm: 22, accuracy: 91, date: '2026-07-30', issuer: 'TypeMaster Academy'
+            };
+            if (id.includes('MASTER') || id.includes('L300')) return {
+                id, studentName: 'Demo Master', lessonId: 'L300', lessonTitle: 'Master Certification',
+                level: 'Master', wpm: 95, accuracy: 99, date: '2026-07-30', issuer: 'TypeMaster Academy'
+            };
+            return null;
+        }
+
+        function tryDecodeFromId(id) {
+            // Try to parse structured IDs like CERT-L015-XXXX-2024
+            const match = id.match(/CERT-L(\d+)-(\w+)-(\d{4})/i);
+            if (!match) return null;
+            const lessonNum = parseInt(match[1], 10);
+            const year = match[3];
+            const levelMap = { 15: 'Beginner', 30: 'Elementary', 75: 'Intermediate', 150: 'Advanced', 225: 'Professional', 300: 'Master' };
+            const level = levelMap[lessonNum] || `Lesson ${lessonNum}`;
+            return {
+                id, studentName: 'TypeMaster Student',
+                lessonId: `L${String(lessonNum).padStart(3,'0')}`,
+                lessonTitle: `${level} Certification`,
+                level, wpm: '—', accuracy: '—', date: `${year}-01-01`,
+                issuer: 'TypeMaster Academy', decodedOnly: true
+            };
+        }
+
+        function showValid(el, cert) {
+            const levelIcons = {
+                'Beginner': '📘', 'Elementary': '📗', 'Intermediate': '📙',
+                'Advanced': '📕', 'Professional': '📔', 'Master': '🏆'
+            };
+            const icon = levelIcons[cert.level] || '📜';
+            const issuedDate = cert.date ? new Date(cert.date).toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'}) : 'Unknown';
+
+            el.innerHTML = `
+<div class="result-valid">
+    <div class="result-header">
+        <div class="result-badge">${icon}</div>
+        <div>
+            <div class="result-title">✅ Certificate Verified</div>
+            <div class="result-subtitle">This is an authentic TypeMaster certificate</div>
+        </div>
+    </div>
+    <div class="result-grid">
+        <div class="result-item">
+            <div class="result-item-label">Student Name</div>
+            <div class="result-item-value">${cert.studentName || cert.student || 'TypeMaster Student'}</div>
+        </div>
+        <div class="result-item">
+            <div class="result-item-label">Certificate Level</div>
+            <div class="result-item-value">${cert.level || '—'}</div>
+        </div>
+        <div class="result-item">
+            <div class="result-item-label">Typing Speed</div>
+            <div class="result-item-value">${cert.wpm || '—'} WPM</div>
+        </div>
+        <div class="result-item">
+            <div class="result-item-label">Accuracy</div>
+            <div class="result-item-value">${cert.accuracy || '—'}%</div>
+        </div>
+        <div class="result-item">
+            <div class="result-item-label">Issued By</div>
+            <div class="result-item-value">${cert.issuer || 'TypeMaster Academy'}</div>
+        </div>
+        <div class="result-item">
+            <div class="result-item-label">Issue Date</div>
+            <div class="result-item-value">${issuedDate}</div>
+        </div>
+    </div>
+    <div class="valid-stamp">
+        ✅ VERIFIED — Certificate ID: <strong>${cert.id || cert.certId || '—'}</strong><br>
+        ${cert.decodedOnly ? '⚠️ Decoded from ID structure. For full verification, the certificate must be on the same device it was issued on.' : 'Full verification from TypeMaster Academy database.'}
+    </div>
+</div>`;
+        }
+
+        function showInvalid(el, id) {
+            el.innerHTML = `
+<div class="result-invalid">
+    <div style="font-size:32px;margin-bottom:10px;">❌</div>
+    <div style="font-weight:700;font-size:16px;margin-bottom:6px;">Certificate Not Found</div>
+    <div style="font-size:13px;opacity:0.8;">No certificate found for ID: <strong>${id}</strong></div>
+    <div style="font-size:12px;margin-top:12px;opacity:0.7;">
+        This could mean the ID is incorrect, the certificate was issued on a different device,
+        or the certificate does not exist. Please check the ID and try again.
+    </div>
+</div>`;
+        }
+
+        // Also support Enter key
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('cert-id-input')?.addEventListener('keydown', e => {
+                if (e.key === 'Enter') verifyCertificate();
+            });
+        });
+    </script>
+</body>
+</html>

@@ -389,5 +389,91 @@ const ProgressManager = {
 
     completeLesson(lessonId, wpm, xpReward) {
         return this.completeLessonAttempt(lessonId, { wpm, accuracy: 100 }) || { leveledUp: false, newLevel: 1 };
+    },
+
+    // ── Rank System ─────────────────────────────────────────────────────────
+    getRank(profile) {
+        const RANKS = [
+            { name: 'Student',        minWpm: 0,   minLessons: 0,   color: '#94A3B8', icon: '📘', glow: '#94A3B830' },
+            { name: 'Learner',        minWpm: 10,  minLessons: 5,   color: '#60A5FA', icon: '📗', glow: '#60A5FA30' },
+            { name: 'Bronze',         minWpm: 20,  minLessons: 15,  color: '#CD7F32', icon: '🥉', glow: '#CD7F3230' },
+            { name: 'Silver',         minWpm: 30,  minLessons: 30,  color: '#94A3B8', icon: '🥈', glow: '#94A3B830' },
+            { name: 'Gold',           minWpm: 40,  minLessons: 50,  color: '#F59E0B', icon: '🥇', glow: '#F59E0B30' },
+            { name: 'Platinum',       minWpm: 50,  minLessons: 75,  color: '#67E8F9', icon: '💠', glow: '#67E8F930' },
+            { name: 'Diamond',        minWpm: 60,  minLessons: 100, color: '#818CF8', icon: '💎', glow: '#818CF830' },
+            { name: 'Elite',          minWpm: 70,  minLessons: 150, color: '#F472B6', icon: '⭐', glow: '#F472B630' },
+            { name: 'Master',         minWpm: 80,  minLessons: 200, color: '#34D399', icon: '🏆', glow: '#34D39930' },
+            { name: 'Grand Master',   minWpm: 90,  minLessons: 250, color: '#FB923C', icon: '👑', glow: '#FB923C30' },
+            { name: 'Legend',         minWpm: 100, minLessons: 275, color: '#E879F9', icon: '🌟', glow: '#E879F930' },
+            { name: 'Typing Champion',minWpm: 120, minLessons: 300, color: '#FDE047', icon: '⚡', glow: '#FDE04730' }
+        ];
+        const completedLessons = Object.values(this.getLessonProgress())
+            .filter(s => s.status === 'completed' || s.status === 'passed').length;
+        const bestWpm = profile.bestWpm || 0;
+        let rank = RANKS[0];
+        for (let i = RANKS.length - 1; i >= 0; i--) {
+            if (bestWpm >= RANKS[i].minWpm && completedLessons >= RANKS[i].minLessons) {
+                rank = RANKS[i]; break;
+            }
+        }
+        const nextRank = RANKS[RANKS.findIndex(r => r.name === rank.name) + 1] || null;
+        return { ...rank, nextRank, completedLessons, bestWpm };
+    },
+
+    // ── WPM Trend & Prediction ────────────────────────────────────────────────
+    getWpmTrend(days = 14) {
+        const history = this.getHistory();
+        const trend = [];
+        for (let i = days - 1; i >= 0; i--) {
+            const date = new Date(Date.now() - i * 86400000).toISOString().split('T')[0];
+            const dayEntries = history.filter(h => h.date === date && h.wpm > 0);
+            trend.push({
+                date,
+                avgWpm: dayEntries.length > 0 ? Math.round(dayEntries.reduce((s, h) => s + h.wpm, 0) / dayEntries.length) : null,
+                maxWpm: dayEntries.length > 0 ? Math.max(...dayEntries.map(h => h.wpm)) : null,
+                sessions: dayEntries.length
+            });
+        }
+        return trend;
+    },
+
+    predictWpmDate(targetWpm) {
+        const trend = this.getWpmTrend(14);
+        const dataPoints = trend.filter(d => d.avgWpm !== null);
+        if (dataPoints.length < 2) return null;
+
+        // Linear regression on avgWpm
+        const n = dataPoints.length;
+        let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+        dataPoints.forEach((d, i) => {
+            sumX += i; sumY += d.avgWpm;
+            sumXY += i * d.avgWpm; sumX2 += i * i;
+        });
+        const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+        const intercept = (sumY - slope * sumX) / n;
+        const currentAvg = intercept + slope * (n - 1);
+
+        if (slope <= 0) return null; // No improvement trend
+        const daysToTarget = Math.ceil((targetWpm - currentAvg) / slope);
+        if (daysToTarget <= 0) return 'Already achieved!';
+        if (daysToTarget > 730) return null; // >2 years, too uncertain
+
+        const targetDate = new Date(Date.now() + daysToTarget * 86400000);
+        return {
+            date: targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            days: daysToTarget,
+            dailyImprovement: Math.round(slope * 10) / 10
+        };
+    },
+
+    saveWeakKeyMap(weakKeyMap) {
+        try { localStorage.setItem('tm_weak_keys_v3', JSON.stringify(weakKeyMap)); } catch {}
+    },
+
+    getWeakKeyMap() {
+        try {
+            const d = localStorage.getItem('tm_weak_keys_v3');
+            return d ? JSON.parse(d) : {};
+        } catch { return {}; }
     }
 };

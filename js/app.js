@@ -55,7 +55,9 @@ function navigateTo(view) {
 
     // Update top bar title
     const titles = { home: 'Dashboard', lessons: 'Lesson Map', arena: 'Typing Arena',
-        stats: 'Statistics', achieve: 'Achievements', settings: 'Settings', finger: 'Finger Guide' };
+        stats: 'Statistics', achieve: 'Achievements', settings: 'Settings',
+        finger: 'Finger Guide', journey: '🗺️ Journey Timeline',
+        certificates: 'Certificates', documentation: 'Documentation' };
     setText('top-bar-title', titles[view] || view);
 
     AppState.currentView = view;
@@ -63,6 +65,7 @@ function navigateTo(view) {
     // View-specific init
     if (view === 'home')    refreshHome();
     if (view === 'lessons') renderLessonMap();
+    if (view === 'journey') renderJourneyTimeline();
     if (view === 'arena')   {
         if (!AppState.engine) {
             if (AppState.currentLesson) loadArenaLesson(AppState.currentLesson);
@@ -110,6 +113,34 @@ function refreshHome() {
     setText('sidebar-xp-label', `${lvlData.current} / ${lvlData.needed} XP`);
     setText('topbar-streak', daily.currentStreak);
 
+    // Rank System
+    try {
+        const rank = ProgressManager.getRank(p);
+        const rankBadge = document.getElementById('home-rank-badge');
+        const rankWidget = document.getElementById('rank-widget');
+        if (rankBadge) {
+            rankBadge.style.background = rank.glow;
+            rankBadge.style.borderColor = rank.color + '55';
+            rankBadge.style.color = rank.color;
+            rankBadge.innerHTML = `${rank.icon} <span id="home-rank-name">${rank.name}</span>`;
+        }
+        if (rankWidget) {
+            rankWidget.style.borderTopColor = rank.color;
+            const iconEl = document.getElementById('rank-icon-big');
+            const nameEl = document.getElementById('rank-name-big');
+            const nextEl = document.getElementById('rank-next-info');
+            if (iconEl) iconEl.textContent = rank.icon;
+            if (nameEl) { nameEl.textContent = rank.name; nameEl.style.color = rank.color; }
+            if (nextEl) {
+                if (rank.nextRank) {
+                    nextEl.textContent = `Next: ${rank.nextRank.icon} ${rank.nextRank.name} — ${rank.nextRank.minWpm} WPM + ${rank.nextRank.minLessons} lessons needed`;
+                } else {
+                    nextEl.textContent = '🏆 Maximum Rank Achieved — Typing Champion!';
+                }
+            }
+        }
+    } catch(e) { console.warn('Rank render error:', e); }
+
     // Next lesson
     updateNextLessonCard();
 
@@ -123,8 +154,30 @@ function refreshHome() {
     // Weekly chart
     renderWeeklyChart(sessions);
 
-    // Quote
+    // Motivation Engine
     setDailyQuote();
+
+    // Smart Recommendations
+    try {
+        if (typeof AdaptiveEngine !== 'undefined') {
+            const recs = AdaptiveEngine.getRecommendations();
+            renderRecommendations(recs);
+        }
+    } catch(e) { console.warn('Recommendations error:', e); }
+
+    // Speed Prediction
+    try {
+        const t40 = ProgressManager.predictWpmDate(40);
+        const t60 = ProgressManager.predictWpmDate(60);
+        const t100 = ProgressManager.predictWpmDate(100);
+        const predEl40 = document.getElementById('predict-40');
+        const predEl60 = document.getElementById('predict-60');
+        const predEl100 = document.getElementById('predict-100');
+        const prof = ProgressManager.getProfile();
+        if (predEl40) predEl40.textContent = prof.bestWpm >= 40 ? '✅ Already achieved!' : (t40 ? `Est. ${t40.date}` : 'Need more data (7+ days)');
+        if (predEl60) predEl60.textContent = prof.bestWpm >= 60 ? '✅ Already achieved!' : (t60 ? `Est. ${t60.date}` : 'Need more data (7+ days)');
+        if (predEl100) predEl100.textContent = prof.bestWpm >= 100 ? '✅ Already achieved!' : (t100 ? `Est. ${t100.date}` : 'Need more data (7+ days)');
+    } catch(e) { console.warn('Prediction error:', e); }
 }
 
 function updateNextLessonCard() {
@@ -150,25 +203,65 @@ function updateNextLessonCard() {
 }
 
 function setDailyQuote() {
-    const quotes = [
-        'The secret of getting ahead is getting started. — Mark Twain',
-        'It always seems impossible until it\'s done. — Nelson Mandela',
-        'Practice is the best master. — Latin Proverb',
-        'Excellence is not a gift, but a skill that takes practice.',
-        'The expert in anything was once a beginner.',
-        'Progress, not perfection. Type daily and let speed follow.',
-        'Your fingers know more than you think. Trust the muscle memory.',
-        'Every word you type today is an investment in tomorrow.',
-        'Speed comes naturally when accuracy is mastered first.',
-        'The keyboard is your instrument. Play it well.',
-        'Slow is smooth, and smooth is fast. — Military Proverb',
-        'Discipline is the bridge between goals and accomplishment.',
-        'The only bad practice session is the one that didn\'t happen.',
-        'Accuracy first. Speed second. Always.',
-        'Touch typists don\'t look at the keyboard. They look ahead.'
-    ];
-    const dayIndex = new Date().getDate() % quotes.length;
-    setText('daily-quote', quotes[dayIndex]);
+    try {
+        if (typeof MotivationEngine !== 'undefined') {
+            const q = MotivationEngine.getDailyQuote();
+            const qEl = document.getElementById('daily-quote');
+            const aEl = document.getElementById('daily-quote-author');
+            if (qEl) qEl.textContent = `"${q.text}"`;
+            if (aEl) aEl.textContent = `— ${q.author}`;
+
+            const wc = MotivationEngine.getWeeklyChallenge();
+            const wiEl = document.getElementById('weekly-challenge-icon');
+            const wtEl = document.getElementById('weekly-challenge-title');
+            const wdEl = document.getElementById('weekly-challenge-desc');
+            if (wiEl) wiEl.textContent = wc.icon;
+            if (wtEl) wtEl.textContent = wc.title;
+            if (wdEl) wdEl.textContent = wc.desc;
+        } else {
+            // Fallback
+            const quotes = [
+                'The secret of getting ahead is getting started. — Mark Twain',
+                'Practice is the best master. — Latin Proverb',
+                'Speed comes naturally when accuracy is mastered first.',
+                'Touch typists don\'t look at the keyboard. They look ahead.',
+                'Every keystroke brings you closer to mastery.'
+            ];
+            const dayIndex = new Date().getDate() % quotes.length;
+            setText('daily-quote', quotes[dayIndex]);
+        }
+    } catch (e) { console.warn('Quote error:', e); }
+}
+
+function renderRecommendations(recs) {
+    const grid = document.getElementById('recommendations-grid');
+    if (!grid || !recs || recs.length === 0) return;
+    grid.innerHTML = recs.map(r => `
+        <div style="background:rgba(0,0,0,0.25);border:1px solid ${r.color}30;border-left:3px solid ${r.color};border-radius:10px;padding:14px;cursor:pointer;"
+            onclick="handleRecommendationClick(${JSON.stringify(r).replace(/"/g,'&quot;')})">
+            <div style="font-size:22px;margin-bottom:6px;">${r.icon}</div>
+            <div style="font-weight:700;font-size:13px;color:#FFF;margin-bottom:3px;">${r.title}</div>
+            <div style="font-size:11px;color:${r.color};margin-bottom:6px;font-weight:600;">${r.subtitle}</div>
+            <div style="font-size:12px;color:var(--text-sub);">${r.desc}</div>
+        </div>
+    `).join('');
+}
+
+function handleRecommendationClick(rec) {
+    if (!rec) return;
+    if (rec.action === 'lesson' && rec.lessonId) {
+        AppState.currentLesson = ALL_LESSONS.find(l => l.id === rec.lessonId);
+        navigateTo('arena');
+        if (AppState.currentLesson) loadArenaLesson(AppState.currentLesson);
+    } else if (rec.action === 'speed_test') {
+        navigateTo('arena');
+        loadArenaMode('time', '60');
+    } else if (rec.action === 'adaptive_practice' && rec.lessonData) {
+        navigateTo('arena');
+        loadArenaFreeText(rec.lessonData.text, rec.lessonData.title);
+    } else {
+        navigateTo('arena');
+    }
 }
 
 function renderWeeklyChart(sessions) {
@@ -213,8 +306,128 @@ function renderWeeklyChart(sessions) {
 }
 
 // ═══════════════════════════════════════════════════════════
+// JOURNEY TIMELINE
+// ═══════════════════════════════════════════════════════════
+function renderJourneyTimeline() {
+    const container = document.getElementById('journey-map-container');
+    if (!container) return;
+
+    const progress = ProgressManager.getLessonProgress();
+    const completedSet = ProgressManager.getCompletedLessons();
+    const totalLessons = typeof ALL_LESSONS !== 'undefined' ? ALL_LESSONS.length : 300;
+
+    // Count stats
+    let completed = 0, attempted = 0, certs = 0;
+    Object.values(progress).forEach(s => {
+        if (s.status === 'completed' || s.status === 'passed') completed++;
+        else if (s.status === 'attempted') attempted++;
+    });
+    // Count certificates milestones (at L015, L030, L075, L150, L225, L300)
+    const certIds = ['L015','L030','L075','L150','L225','L300'];
+    certIds.forEach(id => { if (completedSet.has(id)) certs++; });
+
+    const remaining = totalLessons - completed - attempted;
+    const pct = Math.round((completed / totalLessons) * 100);
+
+    // Update stats
+    const setText2 = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    setText2('journey-pct', pct + '%');
+    setText2('journey-completed', completed);
+    setText2('journey-attempted', attempted);
+    setText2('journey-remaining', Math.max(0, remaining));
+    setText2('journey-certs', certs);
+    const bar = document.getElementById('journey-bar');
+    if (bar) bar.style.width = pct + '%';
+
+    // Render by curriculum units
+    container.innerHTML = '';
+    if (typeof CURRICULUM === 'undefined') {
+        container.innerHTML = '<div style="color:var(--text-sub);padding:20px;">Curriculum data not available.</div>';
+        return;
+    }
+
+    // Find current lesson (first non-completed)
+    let currentId = null;
+    if (typeof ALL_LESSONS !== 'undefined') {
+        const cur = ALL_LESSONS.find(l => !completedSet.has(l.id));
+        if (cur) currentId = cur.id;
+    }
+
+    // Certificate milestone lesson IDs
+    const certMilestones = new Set(['L015','L030','L075','L150','L225','L300']);
+    // Exam lesson IDs (approximately every 15 lessons)
+    const examIds = new Set(['L014','L029','L074','L149','L224','L299','L300']);
+
+    for (const unit of Object.values(CURRICULUM)) {
+        const unitLessons = unit.lessons || [];
+        const unitCompleted = unitLessons.filter(l => completedSet.has(l.id)).length;
+        const unitPct = Math.round((unitCompleted / Math.max(1, unitLessons.length)) * 100);
+
+        const unitDiv = document.createElement('div');
+        unitDiv.className = 'journey-unit';
+        unitDiv.innerHTML = `
+            <div class="journey-unit-header">
+                <span>${unit.icon || '📚'}</span>
+                <span>${unit.title}</span>
+                <span class="journey-unit-progress">${unitCompleted}/${unitLessons.length} (${unitPct}%)</span>
+            </div>
+            <div class="journey-nodes" id="jn-${unit.id}"></div>
+        `;
+        container.appendChild(unitDiv);
+
+        const nodesContainer = unitDiv.querySelector(`#jn-${unit.id}`);
+        for (const lesson of unitLessons) {
+            const lessonStatus = progress[lesson.id];
+            const isCompleted = completedSet.has(lesson.id);
+            const isAttempted = lessonStatus?.status === 'attempted';
+            const isCurrent = lesson.id === currentId;
+            const isExam = examIds.has(lesson.id);
+            const isMilestone = certMilestones.has(lesson.id);
+
+            let cls = 'journey-node locked';
+            if (isMilestone && isCompleted) cls = 'journey-node milestone completed';
+            else if (isMilestone) cls = 'journey-node milestone' + (isCurrent ? ' current' : '');
+            else if (isCompleted) cls = 'journey-node completed';
+            else if (isCurrent) cls = 'journey-node current';
+            else if (isAttempted) cls = 'journey-node attempted';
+            else if (isExam) cls = 'journey-node exam';
+
+            const label = isMilestone ? '🏆' : isCompleted ? '✓' : isCurrent ? '▶' : isAttempted ? '~' : lesson.lessonNum || '?';
+            const bwpm = lessonStatus?.bestWpm ? ` | Best: ${lessonStatus.bestWpm} WPM` : '';
+            const tooltip = `${lesson.title || lesson.id} (Lesson ${lesson.lessonNum})${bwpm}`;
+
+            const node = document.createElement('div');
+            node.className = cls;
+            node.title = tooltip;
+            node.textContent = label;
+            if (isCompleted || isCurrent || isAttempted) {
+                node.onclick = () => {
+                    AppState.currentLesson = lesson;
+                    navigateTo('arena');
+                    loadArenaLesson(lesson);
+                };
+            }
+            nodesContainer.appendChild(node);
+        }
+    }
+}
+
+// ─── Load arena with free-form text (for adaptive lessons) ─
+function loadArenaFreeText(text, title) {
+    try {
+        AppState.currentLesson = { id: 'adaptive', title: title || 'Adaptive Practice', text };
+        if (typeof loadArenaLesson === 'function') {
+            loadArenaLesson(AppState.currentLesson);
+        } else {
+            loadArenaMode('words', '30');
+        }
+    } catch(e) { loadArenaMode('words', '30'); }
+}
+
+// ═══════════════════════════════════════════════════════════
 // LESSON MAP
 // ═══════════════════════════════════════════════════════════
+
 function renderLessonMap() {
     const container = $('lesson-map-container');
     if (!container) return;
@@ -568,6 +781,32 @@ function handleFinish(metrics, lesson) {
 
     const profile = ProgressManager.saveSession(session);
 
+    // 🧠 Adaptive Learning: accumulate mistake data
+    try {
+        if (typeof AdaptiveEngine !== 'undefined' && AppState.engine && AppState.engine.mistakeMap) {
+            AdaptiveEngine.accumulateMistakes(AppState.engine.mistakeMap);
+        }
+    } catch(e) {}
+
+    // 🔥 Performance Replay: save keystroke log
+    try {
+        if (typeof ReplayEngine !== 'undefined' && AppState.engine) {
+            ReplayEngine.saveSession({
+                keystrokeLog: AppState.engine.keystrokeLog || [],
+                words: AppState.engine.words || [],
+                metrics: { ...metrics, timeline: AppState.engine.timeline || [] },
+                wordTimings: []
+            });
+        }
+    } catch(e) {}
+
+    // 🎉 Motivation: check for milestone celebrations
+    try {
+        if (typeof MotivationEngine !== 'undefined') {
+            MotivationEngine.checkCelebrations(profile || {}, metrics);
+        }
+    } catch(e) {}
+
     // Check lesson pass
     let passed = false;
     let xpGained = 0;
@@ -656,7 +895,39 @@ function showResultModal(metrics, lesson, passed, xpGained) {
         drawResultCharts(metrics);
     }, 100);
 
+    // Add/update Replay button in result actions
+    let replayBtn = document.getElementById('btn-replay-session');
+    if (!replayBtn) {
+        replayBtn = document.createElement('button');
+        replayBtn.id = 'btn-replay-session';
+        replayBtn.className = 'btn btn-ghost';
+        replayBtn.innerHTML = '▶️ View Replay';
+        replayBtn.onclick = () => { if (typeof ReplayEngine !== 'undefined') ReplayEngine.show(); };
+        const actionsEl = document.querySelector('.result-actions') || modal.querySelector('[style*="display:flex"]');
+        if (actionsEl) actionsEl.appendChild(replayBtn);
+    }
+
+    // Ensure replay modal exists
+    ensureReplayModal();
+
     modal.classList.add('open');
+}
+
+function ensureReplayModal() {
+    if (document.getElementById('replay-modal')) return;
+    const m = document.createElement('div');
+    m.id = 'replay-modal';
+    m.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px);';
+    m.innerHTML = `
+        <div style="background:var(--bg,#0F172A);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:28px;width:90%;max-width:700px;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <h2 style="font-size:18px;font-weight:800;">▶️ Performance Replay</h2>
+                <button onclick="if(typeof ReplayEngine!=='undefined')ReplayEngine.hide()" style="background:none;border:none;color:var(--text-sub,#94A3B8);font-size:20px;cursor:pointer;">✕</button>
+            </div>
+            <div id="replay-modal-body" style="flex:1;overflow-y:auto;"></div>
+        </div>
+    `;
+    document.body.appendChild(m);
 }
 
 function calcGrade(wpm, acc) {

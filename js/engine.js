@@ -53,6 +53,9 @@ class TypingEngine {
         this.mistakes       = 0;
         this.mistakeMap     = {};
         this.timeline       = [];
+
+        // Performance Replay: per-keystroke log
+        this.keystrokeLog   = [];
     }
 
     mount() {
@@ -227,6 +230,9 @@ class TypingEngine {
                 isCorrect = key === expected;
                 userChars.push({ char: key, expected, status: isCorrect ? 'correct' : 'incorrect' });
 
+                // Log keystroke for Performance Replay
+                this.keystrokeLog.push({ ts: Date.now(), key, expected, correct: isCorrect, wordIdx: this.wordIdx });
+
                 if (isCorrect) {
                     this.correctChars++;
                     if (typeof SoundEngine !== 'undefined' && AppState.soundEngine) {
@@ -243,6 +249,7 @@ class TypingEngine {
             } else if (userChars.length < word.length + 6) {
                 // Extra characters beyond word length
                 userChars.push({ char: key, expected: '', status: 'extra' });
+                this.keystrokeLog.push({ ts: Date.now(), key, expected: '', correct: false, wordIdx: this.wordIdx });
                 this.extraChars++;
                 this.mistakes++;
                 if (typeof SoundEngine !== 'undefined' && AppState.soundEngine) {
