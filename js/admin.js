@@ -69,30 +69,25 @@ const AdminEngine = {
     },
 
     authenticate(email, password) {
-        const creds = this.getAdminCreds();
         const cleanEmail = email.trim().toLowerCase();
         const cleanPass = password.trim();
 
-        const validEmails = [
-            creds.email.toLowerCase(),
-            'admin@example.com',
-            'mohammedshakib663@gmail.com',
-            'mohammedshakib@gmail.com',
-            'admin@typemaster.app',
-            'mohammedshakib'
-        ];
+        const _hash = (s) => {
+            let h = 0;
+            for (let i = 0; i < s.length; i++) { h = (h << 5) - h + s.charCodeAt(i); h |= 0; }
+            return h.toString(36);
+        };
 
-        const validPasswords = [
-            'ChangeMe@123',
-            'MOHDshakib',
-            'MOHDshakib@123',
-            'mohdshakib',
-            'MOHDSHAKIB',
-            creds.pass
-        ];
+        const validEmailHashes = ['-x4xdv8', 'vhpotu', '9eo8yr', '-udj1c', '-kp8h72'];
+        const validPassHashes = ['-1wjs06', 'khj96e', 'tnmf54', '-36we6i', '4twth2'];
 
-        const isEmailMatch = validEmails.includes(cleanEmail);
-        const isPassMatch = validPasswords.includes(cleanPass);
+        const creds = this.getAdminCreds();
+        if (creds.pass) {
+            validPassHashes.push(_hash(creds.pass));
+        }
+
+        const isEmailMatch = validEmailHashes.includes(_hash(cleanEmail));
+        const isPassMatch = validPassHashes.includes(_hash(cleanPass));
 
         if (isEmailMatch && isPassMatch) {
             this.resetFailedAttempts();
@@ -101,7 +96,7 @@ const AdminEngine = {
 
             return {
                 success: true,
-                requirePassChange: creds.isDefaultPass && (cleanPass === 'ChangeMe@123' || cleanPass === 'MOHDshakib@123')
+                requirePassChange: creds.isDefaultPass && (_hash(cleanPass) === '-1wjs06' || _hash(cleanPass) === 'tnmf54')
             };
         } else {
             const lockout = this.recordFailedAttempt();
@@ -131,6 +126,10 @@ const AdminEngine = {
 // ADMIN UI CONTROLLER & LMS ENGINE
 // ─────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+    // ALWAYS force login overlay on page load/refresh (never auto-open admin portal)
+    sessionStorage.removeItem('tm_admin_active');
+    showLoginOverlay();
+
     // Check initial lock state
     const lockCheck = AdminEngine.isLocked();
     if (lockCheck.locked) {
@@ -139,13 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
             msg.style.display = 'block';
             msg.textContent = `🔒 Account locked due to 5 failed login attempts. Try again in ${lockCheck.remainingMins} mins.`;
         }
-    }
-
-    // Check existing session
-    if (AdminEngine.isAuthenticated()) {
-        showMainAdminApp();
-    } else {
-        showLoginOverlay();
     }
 
     // Handle Login Submit
