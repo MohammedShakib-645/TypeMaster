@@ -1510,6 +1510,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeStudent) {
             const labelEl = $('topbar-student-name');
             if (labelEl) labelEl.textContent = activeStudent.fullName || activeStudent.username;
+        } else {
+            setTimeout(() => {
+                const modal = $('student-auth-modal');
+                if (modal) modal.classList.add('open');
+            }, 600);
+        }
+
+        const btnGuest = $('btn-guest-login');
+        if (btnGuest) {
+            btnGuest.onclick = () => {
+                const guest = { fullName: 'Guest Student', username: 'guest', email: 'guest@typemaster.app' };
+                AuthEngine.setActiveStudent(guest, false);
+                const modal = $('student-auth-modal');
+                if (modal) modal.classList.remove('open');
+                const labelEl = $('topbar-student-name');
+                if (labelEl) labelEl.textContent = 'Guest Student';
+                showToast('👋', 'Welcome Guest!', 'Continuing as Guest Student.');
+            };
         }
 
         const btnOpenAuth = $('btn-open-student-auth');

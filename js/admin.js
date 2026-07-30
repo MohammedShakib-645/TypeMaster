@@ -105,7 +105,7 @@ const AdminEngine = {
             };
         } else {
             const lockout = this.recordFailedAttempt();
-            return { success: false, message: `❌ Access Denied. Default Admin Email: admin@example.com | Password: ChangeMe@123` };
+            return { success: false, message: `❌ Invalid administrator email or password.` };
         }
     },
 
