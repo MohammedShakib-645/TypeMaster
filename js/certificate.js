@@ -1,7 +1,7 @@
 /**
  * TypeMaster - Complete Certification & Graduation System
- * Generates premium A4 landscape certificates, verification QR codes,
- * configurable provider settings, digital signature, PDF/PNG exports, and verification lookup.
+ * Generates luxury A4 landscape certificates matching classic gold filigree,
+ * diagonal royal navy ribbons, 3D metallic seal, QR verification, and digital signatures.
  */
 
 const CERTIFICATE_LEVELS = [
@@ -106,9 +106,6 @@ const CertificateEngine = {
         return 'TM-' + String(nextNum).padStart(6, '0');
     },
 
-    /**
-     * Check eligibility and issue certificate if milestone passed
-     */
     checkAndAwardCertificate(userName, lessonId, wpm, accuracy) {
         const levelConfig = CERTIFICATE_LEVELS.find(l => l.examLessonId === lessonId || l.milestoneLesson === parseInt(lessonId.replace('L','')));
         if (!levelConfig) return null;
@@ -120,7 +117,7 @@ const CertificateEngine = {
         if (wpm < levelConfig.requiredWpm || accuracy < levelConfig.requiredAcc) return null;
 
         const existing = this.getEarnedCertificates().find(c => c.levelId === levelConfig.id);
-        if (existing) return existing; // already awarded
+        if (existing) return existing;
 
         const cert = {
             id: this.getNextCertSeq(),
@@ -181,7 +178,6 @@ const CertificateEngine = {
         const found = certs.find(c => c.id.toUpperCase() === cleanId);
         if (found) return { valid: true, cert: found };
 
-        // Generate sample verified cert for standard demo IDs
         if (cleanId.startsWith('TM-')) {
             const provider = this.getProviderSettings();
             return {
@@ -211,12 +207,11 @@ const CertificateEngine = {
 <head>
     <meta charset="UTF-8">
     <title>TypeMaster Certificate - ${d.studentName}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Inter:wght@400;500;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@1,700;1,900&family=Inter:wght@400;500;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background: #0B0F19;
-            color: #F8FAFC;
+            background: #111827;
             font-family: 'Inter', sans-serif;
             display: flex;
             justify-content: center;
@@ -225,213 +220,296 @@ const CertificateEngine = {
             padding: 20px;
         }
 
-        .cert-container {
+        .cert-paper {
             width: 1050px;
             height: 740px;
-            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
-            border: 12px solid #D97706;
-            border-image: linear-gradient(135deg, #F59E0B, #B45309, #F59E0B, #78350F) 1;
-            padding: 40px;
+            background: #FDFDF9;
+            border: 6px solid #111111;
+            padding: 20px;
             position: relative;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.8);
+            overflow: hidden;
+            color: #111;
         }
 
-        .inner-border {
+        /* Gold Double Inner Border */
+        .gold-border {
             position: absolute;
-            inset: 12px;
-            border: 2px solid rgba(245, 158, 11, 0.4);
+            inset: 16px;
+            border: 2px solid #C5A059;
+            pointer-events: none;
+        }
+        .gold-border-inner {
+            position: absolute;
+            inset: 20px;
+            border: 1px solid #D4AF37;
             pointer-events: none;
         }
 
-        .corner-decor {
+        /* Diagonal Navy Ribbons */
+        .ribbon-top-left {
             position: absolute;
-            width: 32px;
-            height: 32px;
-            border: 3px solid #F59E0B;
-        }
-        .tl { top: 16px; left: 16px; border-right: none; border-bottom: none; }
-        .tr { top: 16px; right: 16px; border-left: none; border-bottom: none; }
-        .bl { bottom: 16px; left: 16px; border-right: none; border-top: none; }
-        .br { bottom: 16px; right: 16px; border-left: none; border-top: none; }
-
-        .cert-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            top: -45px;
+            left: -130px;
+            width: 320px;
+            height: 70px;
+            background: linear-gradient(135deg, #0B192C 0%, #1E3E62 100%);
+            transform: rotate(-42deg);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+            z-index: 10;
         }
 
-        .brand-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .ribbon-bottom-right {
+            position: absolute;
+            bottom: -45px;
+            right: -130px;
+            width: 320px;
+            height: 70px;
+            background: linear-gradient(135deg, #0B192C 0%, #1E3E62 100%);
+            transform: rotate(-42deg);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+            z-index: 10;
         }
-        .brand-icon {
+
+        /* 3D Metallic Gold Seal with Ribbon Tails */
+        .gold-seal-container {
+            position: absolute;
+            top: 45px;
+            left: 110px;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .gold-seal-badge {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #FFE259 0%, #FFA751 60%, #C5A059 100%);
+            border: 4px solid #FFF8DC;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5), inset 0 2px 6px rgba(255,255,255,0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .gold-seal-inner {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            background: #111;
+            border: 2px solid #FFE259;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #FFE259;
+            text-align: center;
+        }
+
+        .seal-monogram {
+            font-family: 'Cinzel', serif;
             font-size: 32px;
-            background: linear-gradient(135deg, #F59E0B, #D97706);
+            font-weight: 900;
+            line-height: 1;
+            background: linear-gradient(135deg, #FFE259, #FFA751);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .brand-title {
-            font-family: 'Cinzel', serif;
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: #F8FAFC;
-        }
-        .brand-tagline {
-            font-size: 11px;
-            color: #F59E0B;
-            letter-spacing: 3px;
+
+        .seal-tag {
+            font-size: 8px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #C5A059;
             text-transform: uppercase;
         }
 
-        .cert-id-badge {
-            font-family: 'Cinzel', serif;
-            font-size: 13px;
-            color: #F59E0B;
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            padding: 6px 14px;
-            border-radius: 6px;
-            letter-spacing: 1px;
+        /* Ribbon Tails */
+        .ribbon-tails {
+            display: flex;
+            gap: 6px;
+            margin-top: -12px;
+        }
+        .ribbon-tail {
+            width: 24px;
+            height: 45px;
+            background: #0B192C;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
         }
 
-        .cert-body {
-            text-align: center;
-            margin: 20px 0;
+        /* Vintage Corner Filigree Ornaments */
+        .corner-filigree {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            pointer-events: none;
+            z-index: 5;
+        }
+        .filigree-top-right {
+            top: 25px;
+            right: 25px;
+        }
+        .filigree-bottom-left {
+            bottom: 25px;
+            left: 25px;
+            transform: rotate(180deg);
         }
 
-        .cert-main-title {
-            font-family: 'Cinzel', serif;
-            font-size: 36px;
-            font-weight: 900;
-            letter-spacing: 4px;
-            color: #F59E0B;
-            text-shadow: 0 2px 10px rgba(245,158,11,0.3);
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .cert-sub {
-            font-size: 14px;
-            color: #94A3B8;
-            letter-spacing: 1px;
-            margin-bottom: 24px;
-        }
-
-        .student-name {
-            font-family: 'Cinzel', serif;
-            font-size: 42px;
-            font-weight: 900;
-            color: #FFFFFF;
-            border-bottom: 2px solid #F59E0B;
-            display: inline-block;
-            padding: 0 40px 8px;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-        }
-
-        .cert-desc {
-            font-size: 15px;
-            line-height: 1.8;
-            color: #CBD5E1;
-            max-width: 800px;
-            margin: 0 auto 24px;
-        }
-
-        .stats-banner {
-            display: inline-flex;
-            gap: 40px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 12px 32px;
-            border-radius: 12px;
-        }
-        .stat-item {
+        /* Certificate Content Area */
+        .cert-content {
+            height: 100%;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-        }
-        .stat-val {
-            font-size: 22px;
-            font-weight: 900;
-            color: #3B82F6;
-            font-family: monospace;
-        }
-        .stat-lbl {
-            font-size: 10px;
-            color: #94A3B8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            text-align: center;
+            padding: 30px 60px;
+            position: relative;
+            z-index: 15;
         }
 
-        .cert-footer {
+        .cert-title-header {
+            margin-top: 10px;
+        }
+
+        .cert-main-header {
+            font-family: 'Cinzel', serif;
+            font-size: 56px;
+            font-weight: 900;
+            color: #0B192C;
+            letter-spacing: 4px;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .cert-sub-header {
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 6px;
+            color: #856404;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        .cert-certify-line {
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            color: #4A5568;
+            letter-spacing: 1px;
+            margin: 20px 0 10px;
+        }
+
+        .student-name-display {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 46px;
+            font-weight: 900;
+            color: #0B192C;
+            border-bottom: 2px solid #C5A059;
+            padding: 0 40px 6px;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .cert-completion-text {
+            font-size: 15px;
+            color: #2D3748;
+            line-height: 1.8;
+            max-width: 750px;
+        }
+
+        .course-title-highlight {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 22px;
+            font-weight: 700;
+            color: #0B192C;
+            margin: 4px 0;
+        }
+
+        .organization-highlight {
+            font-weight: 800;
+            color: #856404;
+        }
+
+        /* Footer Grid */
+        .cert-footer-row {
+            width: 100%;
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 10px;
         }
 
-        .qr-section {
+        .footer-block {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 12px;
-        }
-        .qr-box {
-            width: 70px;
-            height: 70px;
-            background: #fff;
-            padding: 5px;
-            border-radius: 6px;
-        }
-        .qr-info {
-            font-size: 10px;
-            color: #94A3B8;
-            line-height: 1.4;
+            min-width: 180px;
         }
 
-        .seal-wrap {
+        .footer-line {
+            width: 160px;
+            height: 1px;
+            background: #A0AEC0;
+            margin-bottom: 6px;
+        }
+
+        .footer-val {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1A202C;
+            margin-bottom: 4px;
+        }
+
+        .footer-lbl {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #718096;
+            text-transform: uppercase;
+        }
+
+        .cert-number {
+            font-size: 11px;
+            color: #718096;
+            font-family: monospace;
+            margin-top: 4px;
+        }
+
+        .qr-verification-block {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-        .gold-seal {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: radial-gradient(circle, #F59E0B 0%, #B45309 100%);
-            border: 3px solid #FDE68A;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            box-shadow: 0 4px 20px rgba(245,158,11,0.4);
+
+        .qr-box-inner {
+            width: 64px;
+            height: 64px;
+            background: #FFF;
+            border: 1px solid #CBD5E0;
+            padding: 4px;
+            border-radius: 4px;
         }
 
-        .sig-section {
-            text-align: center;
-            min-width: 220px;
+        .qr-verify-note {
+            font-size: 9px;
+            color: #718096;
+            margin-top: 4px;
+            letter-spacing: 0.5px;
         }
-        .sig-font {
+
+        .sig-font-style {
             font-family: 'Dancing Script', cursive;
-            font-size: 32px;
-            color: #3B82F6;
+            font-size: 30px;
+            color: #0B192C;
             line-height: 1;
-            margin-bottom: 4px;
         }
-        .sig-line {
-            width: 100%;
-            height: 1px;
-            background: #475569;
-            margin-bottom: 6px;
-        }
-        .sig-name { font-size: 13px; font-weight: 700; color: #F8FAFC; }
-        .sig-title { font-size: 11px; color: #94A3B8; }
-        .sig-org { font-size: 10px; color: #F59E0B; font-weight: 600; }
 
         .action-bar {
             position: fixed;
@@ -441,103 +519,109 @@ const CertificateEngine = {
             display: flex;
             gap: 12px;
             background: #1E293B;
-            padding: 10px 20px;
+            padding: 10px 24px;
             border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             z-index: 999;
         }
         .btn-act {
-            padding: 8px 18px;
+            padding: 8px 20px;
             border-radius: 20px;
             border: none;
             font-size: 13px;
             font-weight: 700;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
         .btn-print { background: #3B82F6; color: #fff; }
-        .btn-share { background: rgba(255,255,255,0.1); color: #fff; }
+        .btn-share { background: rgba(255,255,255,0.15); color: #fff; }
 
         @media print {
             .action-bar { display: none !important; }
             body { background: #fff !important; padding: 0 !important; }
-            .cert-container { box-shadow: none !important; }
+            .cert-paper { box-shadow: none !important; }
         }
     </style>
 </head>
 <body>
 
-<div class="cert-container">
-    <div class="inner-border"></div>
-    <div class="corner-decor tl"></div>
-    <div class="corner-decor tr"></div>
-    <div class="corner-decor bl"></div>
-    <div class="corner-decor br"></div>
+<div class="cert-paper">
+    <div class="gold-border"></div>
+    <div class="gold-border-inner"></div>
 
-    <!-- Header -->
-    <div class="cert-header">
-        <div class="brand-group">
-            <div class="brand-icon">⚡</div>
-            <div>
-                <div class="brand-title">TypeMaster</div>
-                <div class="brand-tagline">Academy of Touch Typing</div>
+    <!-- Diagonal Navy Ribbons -->
+    <div class="ribbon-top-left"></div>
+    <div class="ribbon-bottom-right"></div>
+
+    <!-- 3D Metallic Gold Seal -->
+    <div class="gold-seal-container">
+        <div class="gold-seal-badge">
+            <div class="gold-seal-inner">
+                <div class="seal-monogram">TM</div>
+                <div class="seal-tag">ACADEMY</div>
             </div>
         </div>
-        <div class="cert-id-badge">ID: ${d.id}</div>
-    </div>
-
-    <!-- Body -->
-    <div class="cert-body">
-        <div class="cert-sub">THIS CERTIFICATE IS PROUDLY PRESENTED TO</div>
-        <div class="student-name">${d.studentName}</div>
-        
-        <div class="cert-main-title">${d.levelName}</div>
-        
-        <div class="cert-desc">
-            for successfully completing the <strong>${d.levelName}</strong> Typing Program at TypeMaster and demonstrating outstanding typing skills, dedication, and achievement.<br>
-            This certificate recognizes the successful completion of <strong>${d.lessonsCompleted}</strong> lessons and fulfillment of all graduation requirements.
-        </div>
-
-        <div class="stats-banner">
-            <div class="stat-item">
-                <div class="stat-val">${d.finalWpm}</div>
-                <div class="stat-lbl">Speed (WPM)</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-val">${d.finalAccuracy}%</div>
-                <div class="stat-lbl">Accuracy</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-val">${d.lessonsCompleted}</div>
-                <div class="stat-lbl">Lessons Completed</div>
-            </div>
+        <div class="ribbon-tails">
+            <div class="ribbon-tail"></div>
+            <div class="ribbon-tail"></div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <div class="cert-footer">
-        <div class="qr-section">
-            <div class="qr-box">${qrSVG}</div>
-            <div class="qr-info">
-                <strong>VERIFIED CERTIFICATE</strong><br>
-                Issued: ${d.issueDate}<br>
-                Scan or verify at typemaster.app
+    <!-- Vintage Gold Filigree Corners -->
+    <svg class="corner-filigree filigree-top-right" viewBox="0 0 100 100">
+        <path d="M10 10 Q 50 10 90 90 M 30 10 Q 70 30 90 70 M 10 30 Q 30 70 70 90" fill="none" stroke="#C5A059" stroke-width="2" opacity="0.75"/>
+        <circle cx="85" cy="85" r="4" fill="#D4AF37"/>
+    </svg>
+    <svg class="corner-filigree filigree-bottom-left" viewBox="0 0 100 100">
+        <path d="M10 10 Q 50 10 90 90 M 30 10 Q 70 30 90 70 M 10 30 Q 30 70 70 90" fill="none" stroke="#C5A059" stroke-width="2" opacity="0.75"/>
+        <circle cx="85" cy="85" r="4" fill="#D4AF37"/>
+    </svg>
+
+    <!-- Main Content -->
+    <div class="cert-content">
+        <div class="cert-title-header">
+            <div class="cert-main-header">Certificate</div>
+            <div class="cert-sub-header">OF COMPLETION</div>
+        </div>
+
+        <div class="cert-certify-line">This is to Certify that</div>
+
+        <div>
+            <div class="student-name-display">${d.studentName}</div>
+        </div>
+
+        <div class="cert-completion-text">
+            has successfully completed the<br>
+            <div class="course-title-highlight">${d.levelName} — English Touch Typing Course</div>
+            From <span class="organization-highlight">${d.organization}</span>
+            <div style="font-size:13px;color:#718096;margin-top:4px;">
+                Demonstrating outstanding performance of <strong>${d.finalWpm} WPM</strong> speed & <strong>${d.finalAccuracy}%</strong> accuracy across <strong>${d.lessonsCompleted}</strong> lessons.
             </div>
         </div>
 
-        <div class="seal-wrap">
-            <div class="gold-seal">🎓</div>
-        </div>
+        <!-- Footer Row -->
+        <div class="cert-footer-row">
+            <!-- Date Block -->
+            <div class="footer-block">
+                <div class="footer-val">${d.issueDate}</div>
+                <div class="footer-line"></div>
+                <div class="footer-lbl">DATE</div>
+                <div class="cert-number">Cert. No. : ${d.id}</div>
+            </div>
 
-        <div class="sig-section">
-            <div class="sig-font">${d.providerName}</div>
-            <div class="sig-line"></div>
-            <div class="sig-name">${d.providerName}</div>
-            <div class="sig-title">${d.providerTitle}</div>
-            <div class="sig-org">${d.organization}</div>
+            <!-- QR Code Verification Block -->
+            <div class="qr-verification-block">
+                <div class="qr-box-inner">${qrSVG}</div>
+                <div class="qr-verify-note">Note :- To Verify Certificate Scan The above QR code</div>
+            </div>
+
+            <!-- Signature Block -->
+            <div class="footer-block">
+                <div class="sig-font-style">${d.providerName}</div>
+                <div class="footer-line"></div>
+                <div class="footer-lbl">SIGNATURE</div>
+                <div class="cert-number">${d.providerTitle}, ${d.organization}</div>
+            </div>
         </div>
     </div>
 </div>
