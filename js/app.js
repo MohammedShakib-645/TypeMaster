@@ -63,6 +63,12 @@ function navigateTo(view) {
     // View-specific init
     if (view === 'home')    refreshHome();
     if (view === 'lessons') renderLessonMap();
+    if (view === 'arena')   {
+        if (!AppState.engine) {
+            if (AppState.currentLesson) loadArenaLesson(AppState.currentLesson);
+            else loadArenaMode('words', '30');
+        }
+    }
     if (view === 'stats')   refreshStats();
     if (view === 'achieve') renderAchievements();
     if (view === 'finger')  initFingerGuidePage();
@@ -1358,7 +1364,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Initial render
-    refreshHome();
+    const params = new URLSearchParams(window.location.search);
+    const initialView = params.get('view') || 'home';
+    navigateTo(initialView);
 
     console.log(`%cTypeMaster v3 — ${TOTAL_LESSONS} lessons loaded 🚀`, 'color:#3B82F6;font-size:14px;font-weight:bold');
 });
