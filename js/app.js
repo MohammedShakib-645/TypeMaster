@@ -1628,7 +1628,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     showToast('🎉', 'App Installed!', 'TypeMaster has been successfully installed on your device.');
                 }
             } else {
-                showToast('ℹ️', 'Installation Guide', 'Please follow the instructions below for your device.');
+                showToast('📱', 'Installation Steps', 'Follow the device instructions below. Tap browser menu (⋮) -> "Install App".');
+                const downloadModal = $('app-download-modal');
+                if (downloadModal) {
+                    const cards = downloadModal.querySelectorAll('div[style*="background:rgba(255,255,255,0.04)"]');
+                    cards.forEach(el => {
+                        el.style.transition = 'all 0.3s ease';
+                        el.style.borderColor = '#6366F1';
+                        el.style.boxShadow = '0 0 15px rgba(99, 102, 241, 0.4)';
+                        setTimeout(() => {
+                            el.style.borderColor = 'rgba(255,255,255,0.08)';
+                            el.style.boxShadow = 'none';
+                        }, 2500);
+                    });
+                }
             }
         });
     }
@@ -1637,9 +1650,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.modal-close-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const modal = btn.closest('.modal');
-            if (modal && modal.id === 'student-auth-modal' && (typeof AuthEngine === 'undefined' || !AuthEngine.getActiveStudent())) {
-                showToast('⚠️', 'Account Required', 'Please sign in, register, or use Google Login to access TypeMaster.');
-                return;
+            if (modal && modal.id === 'student-auth-modal' && (typeof AuthEngine !== 'undefined' && !AuthEngine.getActiveStudent())) {
+                const guestStudent = {
+                    id: 'STU-GUEST-' + Date.now().toString(36).toUpperCase(),
+                    fullName: 'Guest Student',
+                    username: 'guest_' + Math.floor(Math.random() * 1000),
+                    email: 'guest@typemaster.app',
+                    avatar: '⚡',
+                    joinedDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                };
+                AuthEngine.setActiveStudent(guestStudent, false);
+                const labelEl = $('topbar-student-name');
+                if (labelEl) labelEl.textContent = 'Guest Student';
             }
             if (modal) modal.classList.remove('open');
         });
@@ -1649,8 +1671,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', e => {
             if (e.target === modal) {
-                if (modal.id === 'student-auth-modal' && (typeof AuthEngine === 'undefined' || !AuthEngine.getActiveStudent())) {
-                    return;
+                if (modal.id === 'student-auth-modal' && (typeof AuthEngine !== 'undefined' && !AuthEngine.getActiveStudent())) {
+                    const guestStudent = {
+                        id: 'STU-GUEST-' + Date.now().toString(36).toUpperCase(),
+                        fullName: 'Guest Student',
+                        username: 'guest_' + Math.floor(Math.random() * 1000),
+                        email: 'guest@typemaster.app',
+                        avatar: '⚡',
+                        joinedDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                    };
+                    AuthEngine.setActiveStudent(guestStudent, false);
+                    const labelEl = $('topbar-student-name');
+                    if (labelEl) labelEl.textContent = 'Guest Student';
                 }
                 modal.classList.remove('open');
             }
@@ -1946,16 +1978,38 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         }
 
+        const loginAsGuest = () => {
+            const guestStudent = {
+                id: 'STU-GUEST-' + Date.now().toString(36).toUpperCase(),
+                fullName: 'Guest Student',
+                username: 'guest_' + Math.floor(Math.random() * 1000),
+                email: 'guest@typemaster.app',
+                avatar: '⚡',
+                joinedDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+            };
+            AuthEngine.setActiveStudent(guestStudent, false);
+            const labelEl = $('topbar-student-name');
+            if (labelEl) labelEl.textContent = 'Guest Student';
+            showToast('⚡', 'Guest Mode', 'Continuing as Guest Student.');
+            const modal = $('student-auth-modal');
+            if (modal) modal.classList.remove('open');
+        };
+
+        const btnGuest = $('btn-guest-login');
+        if (btnGuest) {
+            btnGuest.onclick = loginAsGuest;
+        }
+
         const btnCloseAuth = $('btn-close-auth-modal');
         if (btnCloseAuth) {
             btnCloseAuth.onclick = () => {
                 const current = AuthEngine.getActiveStudent();
                 if (!current) {
-                    showToast('⚠️', 'Account Required', 'Please sign in with Google or create an account to use TypeMaster.');
-                    return;
+                    loginAsGuest();
+                } else {
+                    const modal = $('student-auth-modal');
+                    if (modal) modal.classList.remove('open');
                 }
-                const modal = $('student-auth-modal');
-                if (modal) modal.classList.remove('open');
             };
         }
 

@@ -24,11 +24,11 @@
         rel="stylesheet">
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="./css/themes.css">
-    <link rel="stylesheet" href="./css/main.css">
-    <link rel="stylesheet" href="./css/components.css">
-    <link rel="stylesheet" href="./css/finger-guide.css">
-    <link rel="stylesheet" href="./css/journey.css">
+    <link rel="stylesheet" href="./css/themes.css?v=6.1">
+    <link rel="stylesheet" href="./css/main.css?v=6.1">
+    <link rel="stylesheet" href="./css/components.css?v=6.1">
+    <link rel="stylesheet" href="./css/finger-guide.css?v=6.1">
+    <link rel="stylesheet" href="./css/journey.css?v=6.1">
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
@@ -1404,8 +1404,13 @@
                 <button type="submit" class="btn btn-primary" style="width:100%;margin-top:10px;">🚀 Create Student Account</button>
             </form>
 
-            <div style="margin-top:14px;text-align:center;font-size:11px;color:var(--text-sub);">
-                🔒 Genuine student account required to save progress & certificates.
+            <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;">
+                <button type="button" id="btn-guest-login" class="btn btn-ghost btn-sm" style="width:100%;color:var(--text-sub);border:1px dashed rgba(255,255,255,0.2);">
+                    ⚡ Continue as Guest Student
+                </button>
+                <div style="font-size:11px;color:var(--text-sub);">
+                    🔒 Genuine student account required to save progress & certificates.
+                </div>
             </div>
         </div>
     </div>

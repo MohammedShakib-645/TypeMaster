@@ -22,13 +22,7 @@ const AuthEngine = {
         try {
             const data = localStorage.getItem('tm_active_student_v1') || sessionStorage.getItem('tm_active_student_v1');
             if (!data) return null;
-            const student = JSON.parse(data);
-            // Invalidate legacy guest student sessions
-            if (student && (student.email === 'guest@typemaster.app' || student.username === 'guest')) {
-                this.logoutSilently();
-                return null;
-            }
-            return student;
+            return JSON.parse(data);
         } catch { return null; }
     },
 
