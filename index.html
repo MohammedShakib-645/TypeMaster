@@ -23,12 +23,22 @@
         href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap"
         rel="stylesheet">
 
+    <!-- Cache Buster & SW Reset -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()));
+        }
+        if (window.caches) {
+            caches.keys().then(ks => ks.forEach(k => caches.delete(k)));
+        }
+    </script>
+
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="./css/themes.css?v=6.2">
-    <link rel="stylesheet" href="./css/main.css?v=6.2">
-    <link rel="stylesheet" href="./css/components.css?v=6.2">
-    <link rel="stylesheet" href="./css/finger-guide.css?v=6.2">
-    <link rel="stylesheet" href="./css/journey.css?v=6.2">
+    <link rel="stylesheet" href="./css/themes.css?v=7.0">
+    <link rel="stylesheet" href="./css/main.css?v=7.0">
+    <link rel="stylesheet" href="./css/components.css?v=7.0">
+    <link rel="stylesheet" href="./css/finger-guide.css?v=7.0">
+    <link rel="stylesheet" href="./css/journey.css?v=7.0">
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
@@ -1653,21 +1663,21 @@
     <!-- ════════════════════════════════════
      SCRIPTS (ordered by dependency)
 ════════════════════════════════════ -->
-    <script src="./js/data-texts.js?v=6.0"></script>
-    <script src="./js/curriculum.js?v=6.0"></script>
-    <script src="./js/finger-guide.js?v=6.0"></script>
-    <script src="./js/certificate.js?v=6.0"></script>
-    <script src="./js/progress.js?v=6.0"></script>
-    <script src="./js/auth.js?v=6.0"></script>
-    <script src="./js/sound.js?v=6.0"></script>
-    <script src="./js/engine.js?v=6.0"></script>
-    <script src="./js/keyboard.js?v=6.0"></script>
-    <script src="./js/charts.js?v=6.0"></script>
-    <script src="./js/achievements.js?v=6.0"></script>
-    <script src="./js/motivation.js?v=6.0"></script>
-    <script src="./js/adaptive.js?v=6.0"></script>
-    <script src="./js/replay.js?v=6.0"></script>
-    <script src="./js/app.js?v=6.0"></script>
+    <script src="./js/data-texts.js?v=7.0"></script>
+    <script src="./js/curriculum.js?v=7.0"></script>
+    <script src="./js/finger-guide.js?v=7.0"></script>
+    <script src="./js/certificate.js?v=7.0"></script>
+    <script src="./js/progress.js?v=7.0"></script>
+    <script src="./js/auth.js?v=7.0"></script>
+    <script src="./js/sound.js?v=7.0"></script>
+    <script src="./js/engine.js?v=7.0"></script>
+    <script src="./js/keyboard.js?v=7.0"></script>
+    <script src="./js/charts.js?v=7.0"></script>
+    <script src="./js/achievements.js?v=7.0"></script>
+    <script src="./js/motivation.js?v=7.0"></script>
+    <script src="./js/adaptive.js?v=7.0"></script>
+    <script src="./js/replay.js?v=7.0"></script>
+    <script src="./js/app.js?v=7.0"></script>
 
     <!-- Post-load: update sidebar XP bar and hide loading screen -->
     <script>
