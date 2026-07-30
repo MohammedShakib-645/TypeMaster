@@ -1618,7 +1618,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const triggerPwaBtn = $('btn-trigger-pwa-install');
     if (triggerPwaBtn) {
         triggerPwaBtn.addEventListener('click', async () => {
-            // 1. Try browser native PWA install prompt if active
+            // 1. Trigger native Chrome / Android / Windows PWA install prompt
             if (AppState.deferredInstall) {
                 try {
                     AppState.deferredInstall.prompt();
@@ -1627,39 +1627,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (outcome === 'accepted') {
                         const modal = $('app-download-modal');
                         if (modal) modal.classList.remove('open');
-                        showToast('🎉', 'App Installed!', 'TypeMaster has been installed on your desktop/device.');
+                        showToast('🎉', 'App Installed!', 'TypeMaster has been added to your desktop / app drawer!');
                         return;
                     }
                 } catch (e) {
-                    console.warn('PWA prompt failed:', e);
+                    console.warn('PWA prompt error:', e);
                 }
             }
 
-            // 2. Windows Desktop Shortcut (.url file) Download
-            try {
-                const shortcutContent = `[InternetShortcut]
-URL=https://mohammedshakib-645.github.io/TypeMaster/
-IconIndex=0
-IconFile=https://mohammedshakib-645.github.io/TypeMaster/assets/favicon.svg
-IDList=
-HotKey=0
-[{000214A0-0000-0000-C000-000000000046}]
-Prop3=19,2
-`;
-                const blob = new Blob([shortcutContent], { type: 'application/x-mswinurl' });
-                const downloadUrl = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = downloadUrl;
-                a.download = 'TypeMaster Desktop Shortcut.url';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(downloadUrl);
-
-                showToast('🖥️', 'Desktop Shortcut Downloaded!', 'Move "TypeMaster Desktop Shortcut.url" from Downloads to your Windows Desktop!');
-            } catch (err) {
-                console.error('Shortcut download error:', err);
-                showToast('📱', 'Installation Steps', 'Follow the device instructions below. Tap browser menu (⋮) -> "Install App".');
+            // 2. Clear instructions toast & UI glow (no downloading files)
+            showToast('📲', 'Install Desktop App', 'Click Chrome address bar (⊕) icon at top right, or Menu (⋮) -> "Save & share" -> "Install TypeMaster".');
+            const downloadModal = $('app-download-modal');
+            if (downloadModal) {
+                const cards = downloadModal.querySelectorAll('div[style*="background:rgba(255,255,255,0.04)"]');
+                cards.forEach(el => {
+                    el.style.transition = 'all 0.3s ease';
+                    el.style.borderColor = '#6366F1';
+                    el.style.boxShadow = '0 0 20px rgba(99, 102, 241, 0.5)';
+                    setTimeout(() => {
+                        el.style.borderColor = 'rgba(255,255,255,0.08)';
+                        el.style.boxShadow = 'none';
+                    }, 3000);
+                });
             }
         });
     }

@@ -1,12 +1,15 @@
 {
+    "id": "/TypeMaster/",
     "name": "TypeMaster Academy",
     "short_name": "TypeMaster",
-    "description": "Master touch typing with 300 structured lessons, finger placement guides, and certificates signed by Mohammed Shakib.",
-    "start_url": "./",
+    "description": "Master touch typing with 300 structured lessons, finger placement guides, and certificates.",
+    "start_url": "./index.html",
+    "scope": "./",
     "display": "standalone",
     "background_color": "#0F172A",
     "theme_color": "#3B82F6",
     "orientation": "landscape-primary",
+    "prefer_related_applications": false,
     "categories": ["education", "productivity"],
     "lang": "en",
     "icons": [
